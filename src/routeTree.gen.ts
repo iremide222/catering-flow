@@ -9,38 +9,239 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SignupRouteImport } from './routes/signup'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticated.app.index'
+import { Route as AuthenticatedAppOnboardingRouteImport } from './routes/_authenticated.app.onboarding'
+import { Route as AuthenticatedAppSettingsIndexRouteImport } from './routes/_authenticated.app.settings.index'
+import { Route as AuthenticatedAppQuotationsIndexRouteImport } from './routes/_authenticated.app.quotations.index'
+import { Route as AuthenticatedAppFollowUpsIndexRouteImport } from './routes/_authenticated.app.follow-ups.index'
+import { Route as AuthenticatedAppEventsIndexRouteImport } from './routes/_authenticated.app.events.index'
+import { Route as AuthenticatedAppCustomersIndexRouteImport } from './routes/_authenticated.app.customers.index'
+import { Route as AuthenticatedAppEventsNewRouteImport } from './routes/_authenticated.app.events.new'
+import { Route as AuthenticatedAppEventsIdRouteImport } from './routes/_authenticated.app.events.$id'
+import { Route as AuthenticatedAppCustomersNewRouteImport } from './routes/_authenticated.app.customers.new'
+import { Route as AuthenticatedAppCustomersIdRouteImport } from './routes/_authenticated.app.customers.$id'
 
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRoute = AuthenticatedRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAppIndexRoute = AuthenticatedAppIndexRouteImport.update({
+  id: '/app/',
+  path: '/app/',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedAppOnboardingRoute =
+  AuthenticatedAppOnboardingRouteImport.update({
+    id: '/app/onboarding',
+    path: '/app/onboarding',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedAppSettingsIndexRoute =
+  AuthenticatedAppSettingsIndexRouteImport.update({
+    id: '/app/settings/',
+    path: '/app/settings/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedAppQuotationsIndexRoute =
+  AuthenticatedAppQuotationsIndexRouteImport.update({
+    id: '/app/quotations/',
+    path: '/app/quotations/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedAppFollowUpsIndexRoute =
+  AuthenticatedAppFollowUpsIndexRouteImport.update({
+    id: '/app/follow-ups/',
+    path: '/app/follow-ups/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedAppEventsIndexRoute =
+  AuthenticatedAppEventsIndexRouteImport.update({
+    id: '/app/events/',
+    path: '/app/events/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedAppCustomersIndexRoute =
+  AuthenticatedAppCustomersIndexRouteImport.update({
+    id: '/app/customers/',
+    path: '/app/customers/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedAppEventsNewRoute =
+  AuthenticatedAppEventsNewRouteImport.update({
+    id: '/app/events/new',
+    path: '/app/events/new',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedAppEventsIdRoute =
+  AuthenticatedAppEventsIdRouteImport.update({
+    id: '/app/events/$id',
+    path: '/app/events/$id',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedAppCustomersNewRoute =
+  AuthenticatedAppCustomersNewRouteImport.update({
+    id: '/app/customers/new',
+    path: '/app/customers/new',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedAppCustomersIdRoute =
+  AuthenticatedAppCustomersIdRouteImport.update({
+    id: '/app/customers/$id',
+    path: '/app/customers/$id',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/login': typeof LoginRoute
+  '/signup': typeof SignupRoute
+  '/app/onboarding': typeof AuthenticatedAppOnboardingRoute
+  '/app/': typeof AuthenticatedAppIndexRoute
+  '/app/customers/$id': typeof AuthenticatedAppCustomersIdRoute
+  '/app/customers/new': typeof AuthenticatedAppCustomersNewRoute
+  '/app/events/$id': typeof AuthenticatedAppEventsIdRoute
+  '/app/events/new': typeof AuthenticatedAppEventsNewRoute
+  '/app/customers/': typeof AuthenticatedAppCustomersIndexRoute
+  '/app/events/': typeof AuthenticatedAppEventsIndexRoute
+  '/app/follow-ups/': typeof AuthenticatedAppFollowUpsIndexRoute
+  '/app/quotations/': typeof AuthenticatedAppQuotationsIndexRoute
+  '/app/settings/': typeof AuthenticatedAppSettingsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/login': typeof LoginRoute
+  '/signup': typeof SignupRoute
+  '/app/onboarding': typeof AuthenticatedAppOnboardingRoute
+  '/app': typeof AuthenticatedAppIndexRoute
+  '/app/customers/$id': typeof AuthenticatedAppCustomersIdRoute
+  '/app/customers/new': typeof AuthenticatedAppCustomersNewRoute
+  '/app/events/$id': typeof AuthenticatedAppEventsIdRoute
+  '/app/events/new': typeof AuthenticatedAppEventsNewRoute
+  '/app/customers': typeof AuthenticatedAppCustomersIndexRoute
+  '/app/events': typeof AuthenticatedAppEventsIndexRoute
+  '/app/follow-ups': typeof AuthenticatedAppFollowUpsIndexRoute
+  '/app/quotations': typeof AuthenticatedAppQuotationsIndexRoute
+  '/app/settings': typeof AuthenticatedAppSettingsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/login': typeof LoginRoute
+  '/signup': typeof SignupRoute
+  '/_authenticated/app/onboarding': typeof AuthenticatedAppOnboardingRoute
+  '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
+  '/_authenticated/app/customers/$id': typeof AuthenticatedAppCustomersIdRoute
+  '/_authenticated/app/customers/new': typeof AuthenticatedAppCustomersNewRoute
+  '/_authenticated/app/events/$id': typeof AuthenticatedAppEventsIdRoute
+  '/_authenticated/app/events/new': typeof AuthenticatedAppEventsNewRoute
+  '/_authenticated/app/customers/': typeof AuthenticatedAppCustomersIndexRoute
+  '/_authenticated/app/events/': typeof AuthenticatedAppEventsIndexRoute
+  '/_authenticated/app/follow-ups/': typeof AuthenticatedAppFollowUpsIndexRoute
+  '/_authenticated/app/quotations/': typeof AuthenticatedAppQuotationsIndexRoute
+  '/_authenticated/app/settings/': typeof AuthenticatedAppSettingsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/signup'
+    | '/app/onboarding'
+    | '/app/'
+    | '/app/customers/$id'
+    | '/app/customers/new'
+    | '/app/events/$id'
+    | '/app/events/new'
+    | '/app/customers/'
+    | '/app/events/'
+    | '/app/follow-ups/'
+    | '/app/quotations/'
+    | '/app/settings/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/login'
+    | '/signup'
+    | '/app/onboarding'
+    | '/app'
+    | '/app/customers/$id'
+    | '/app/customers/new'
+    | '/app/events/$id'
+    | '/app/events/new'
+    | '/app/customers'
+    | '/app/events'
+    | '/app/follow-ups'
+    | '/app/quotations'
+    | '/app/settings'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/login'
+    | '/signup'
+    | '/_authenticated/app/onboarding'
+    | '/_authenticated/app/'
+    | '/_authenticated/app/customers/$id'
+    | '/_authenticated/app/customers/new'
+    | '/_authenticated/app/events/$id'
+    | '/_authenticated/app/events/new'
+    | '/_authenticated/app/customers/'
+    | '/_authenticated/app/events/'
+    | '/_authenticated/app/follow-ups/'
+    | '/_authenticated/app/quotations/'
+    | '/_authenticated/app/settings/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  LoginRoute: typeof LoginRoute
+  SignupRoute: typeof SignupRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +249,123 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/app/': {
+      id: '/_authenticated/app/'
+      path: '/app'
+      fullPath: '/app/'
+      preLoaderRoute: typeof AuthenticatedAppIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/app/onboarding': {
+      id: '/_authenticated/app/onboarding'
+      path: '/app/onboarding'
+      fullPath: '/app/onboarding'
+      preLoaderRoute: typeof AuthenticatedAppOnboardingRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/app/settings/': {
+      id: '/_authenticated/app/settings/'
+      path: '/app/settings'
+      fullPath: '/app/settings/'
+      preLoaderRoute: typeof AuthenticatedAppSettingsIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/app/quotations/': {
+      id: '/_authenticated/app/quotations/'
+      path: '/app/quotations'
+      fullPath: '/app/quotations/'
+      preLoaderRoute: typeof AuthenticatedAppQuotationsIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/app/follow-ups/': {
+      id: '/_authenticated/app/follow-ups/'
+      path: '/app/follow-ups'
+      fullPath: '/app/follow-ups/'
+      preLoaderRoute: typeof AuthenticatedAppFollowUpsIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/app/events/': {
+      id: '/_authenticated/app/events/'
+      path: '/app/events'
+      fullPath: '/app/events/'
+      preLoaderRoute: typeof AuthenticatedAppEventsIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/app/customers/': {
+      id: '/_authenticated/app/customers/'
+      path: '/app/customers'
+      fullPath: '/app/customers/'
+      preLoaderRoute: typeof AuthenticatedAppCustomersIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/app/events/new': {
+      id: '/_authenticated/app/events/new'
+      path: '/app/events/new'
+      fullPath: '/app/events/new'
+      preLoaderRoute: typeof AuthenticatedAppEventsNewRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/app/events/$id': {
+      id: '/_authenticated/app/events/$id'
+      path: '/app/events/$id'
+      fullPath: '/app/events/$id'
+      preLoaderRoute: typeof AuthenticatedAppEventsIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/app/customers/new': {
+      id: '/_authenticated/app/customers/new'
+      path: '/app/customers/new'
+      fullPath: '/app/customers/new'
+      preLoaderRoute: typeof AuthenticatedAppCustomersNewRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/app/customers/$id': {
+      id: '/_authenticated/app/customers/$id'
+      path: '/app/customers/$id'
+      fullPath: '/app/customers/$id'
+      preLoaderRoute: typeof AuthenticatedAppCustomersIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
   }
 }
 
+interface AuthenticatedRouteChildren {
+  AuthenticatedAppOnboardingRoute: typeof AuthenticatedAppOnboardingRoute
+  AuthenticatedAppIndexRoute: typeof AuthenticatedAppIndexRoute
+  AuthenticatedAppCustomersIdRoute: typeof AuthenticatedAppCustomersIdRoute
+  AuthenticatedAppCustomersNewRoute: typeof AuthenticatedAppCustomersNewRoute
+  AuthenticatedAppEventsIdRoute: typeof AuthenticatedAppEventsIdRoute
+  AuthenticatedAppEventsNewRoute: typeof AuthenticatedAppEventsNewRoute
+  AuthenticatedAppCustomersIndexRoute: typeof AuthenticatedAppCustomersIndexRoute
+  AuthenticatedAppEventsIndexRoute: typeof AuthenticatedAppEventsIndexRoute
+  AuthenticatedAppFollowUpsIndexRoute: typeof AuthenticatedAppFollowUpsIndexRoute
+  AuthenticatedAppQuotationsIndexRoute: typeof AuthenticatedAppQuotationsIndexRoute
+  AuthenticatedAppSettingsIndexRoute: typeof AuthenticatedAppSettingsIndexRoute
+}
+
+const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedAppOnboardingRoute: AuthenticatedAppOnboardingRoute,
+  AuthenticatedAppIndexRoute: AuthenticatedAppIndexRoute,
+  AuthenticatedAppCustomersIdRoute: AuthenticatedAppCustomersIdRoute,
+  AuthenticatedAppCustomersNewRoute: AuthenticatedAppCustomersNewRoute,
+  AuthenticatedAppEventsIdRoute: AuthenticatedAppEventsIdRoute,
+  AuthenticatedAppEventsNewRoute: AuthenticatedAppEventsNewRoute,
+  AuthenticatedAppCustomersIndexRoute: AuthenticatedAppCustomersIndexRoute,
+  AuthenticatedAppEventsIndexRoute: AuthenticatedAppEventsIndexRoute,
+  AuthenticatedAppFollowUpsIndexRoute: AuthenticatedAppFollowUpsIndexRoute,
+  AuthenticatedAppQuotationsIndexRoute: AuthenticatedAppQuotationsIndexRoute,
+  AuthenticatedAppSettingsIndexRoute: AuthenticatedAppSettingsIndexRoute,
+}
+
+const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
+  AuthenticatedRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  LoginRoute: LoginRoute,
+  SignupRoute: SignupRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
