@@ -4,7 +4,7 @@ import { useAuth } from "@/lib/auth-context";
 import { AppShell } from "@/components/app-shell";
 import { supabase } from "@/integrations/supabase/client";
 
-export const Route = createFileRoute("/_authenticated")({
+export const Route = createFileRoute("/_authenticated/app")({
   beforeLoad: async () => {
     if (typeof window === "undefined") return;
     const { data, error } = await supabase.auth.getUser();
