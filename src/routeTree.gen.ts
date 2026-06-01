@@ -18,6 +18,7 @@ import { Route as AuthenticatedAppOnboardingRouteImport } from './routes/_authen
 import { Route as AuthenticatedAppSuppliersIndexRouteImport } from './routes/_authenticated.app.suppliers.index'
 import { Route as AuthenticatedAppSettingsIndexRouteImport } from './routes/_authenticated.app.settings.index'
 import { Route as AuthenticatedAppQuotationsIndexRouteImport } from './routes/_authenticated.app.quotations.index'
+import { Route as AuthenticatedAppPurchaseOrdersIndexRouteImport } from './routes/_authenticated.app.purchase-orders.index'
 import { Route as AuthenticatedAppInventoryIndexRouteImport } from './routes/_authenticated.app.inventory.index'
 import { Route as AuthenticatedAppFollowUpsIndexRouteImport } from './routes/_authenticated.app.follow-ups.index'
 import { Route as AuthenticatedAppEventsIndexRouteImport } from './routes/_authenticated.app.events.index'
@@ -76,6 +77,12 @@ const AuthenticatedAppQuotationsIndexRoute =
   AuthenticatedAppQuotationsIndexRouteImport.update({
     id: '/quotations/',
     path: '/quotations/',
+    getParentRoute: () => AuthenticatedAppRoute,
+  } as any)
+const AuthenticatedAppPurchaseOrdersIndexRoute =
+  AuthenticatedAppPurchaseOrdersIndexRouteImport.update({
+    id: '/purchase-orders/',
+    path: '/purchase-orders/',
     getParentRoute: () => AuthenticatedAppRoute,
   } as any)
 const AuthenticatedAppInventoryIndexRoute =
@@ -156,6 +163,7 @@ export interface FileRoutesByFullPath {
   '/app/events/': typeof AuthenticatedAppEventsIndexRoute
   '/app/follow-ups/': typeof AuthenticatedAppFollowUpsIndexRoute
   '/app/inventory/': typeof AuthenticatedAppInventoryIndexRoute
+  '/app/purchase-orders/': typeof AuthenticatedAppPurchaseOrdersIndexRoute
   '/app/quotations/': typeof AuthenticatedAppQuotationsIndexRoute
   '/app/settings/': typeof AuthenticatedAppSettingsIndexRoute
   '/app/suppliers/': typeof AuthenticatedAppSuppliersIndexRoute
@@ -176,6 +184,7 @@ export interface FileRoutesByTo {
   '/app/events': typeof AuthenticatedAppEventsIndexRoute
   '/app/follow-ups': typeof AuthenticatedAppFollowUpsIndexRoute
   '/app/inventory': typeof AuthenticatedAppInventoryIndexRoute
+  '/app/purchase-orders': typeof AuthenticatedAppPurchaseOrdersIndexRoute
   '/app/quotations': typeof AuthenticatedAppQuotationsIndexRoute
   '/app/settings': typeof AuthenticatedAppSettingsIndexRoute
   '/app/suppliers': typeof AuthenticatedAppSuppliersIndexRoute
@@ -198,6 +207,7 @@ export interface FileRoutesById {
   '/_authenticated/app/events/': typeof AuthenticatedAppEventsIndexRoute
   '/_authenticated/app/follow-ups/': typeof AuthenticatedAppFollowUpsIndexRoute
   '/_authenticated/app/inventory/': typeof AuthenticatedAppInventoryIndexRoute
+  '/_authenticated/app/purchase-orders/': typeof AuthenticatedAppPurchaseOrdersIndexRoute
   '/_authenticated/app/quotations/': typeof AuthenticatedAppQuotationsIndexRoute
   '/_authenticated/app/settings/': typeof AuthenticatedAppSettingsIndexRoute
   '/_authenticated/app/suppliers/': typeof AuthenticatedAppSuppliersIndexRoute
@@ -221,6 +231,7 @@ export interface FileRouteTypes {
     | '/app/events/'
     | '/app/follow-ups/'
     | '/app/inventory/'
+    | '/app/purchase-orders/'
     | '/app/quotations/'
     | '/app/settings/'
     | '/app/suppliers/'
@@ -241,6 +252,7 @@ export interface FileRouteTypes {
     | '/app/events'
     | '/app/follow-ups'
     | '/app/inventory'
+    | '/app/purchase-orders'
     | '/app/quotations'
     | '/app/settings'
     | '/app/suppliers'
@@ -262,6 +274,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/events/'
     | '/_authenticated/app/follow-ups/'
     | '/_authenticated/app/inventory/'
+    | '/_authenticated/app/purchase-orders/'
     | '/_authenticated/app/quotations/'
     | '/_authenticated/app/settings/'
     | '/_authenticated/app/suppliers/'
@@ -337,6 +350,13 @@ declare module '@tanstack/react-router' {
       path: '/quotations'
       fullPath: '/app/quotations/'
       preLoaderRoute: typeof AuthenticatedAppQuotationsIndexRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/app/purchase-orders/': {
+      id: '/_authenticated/app/purchase-orders/'
+      path: '/purchase-orders'
+      fullPath: '/app/purchase-orders/'
+      preLoaderRoute: typeof AuthenticatedAppPurchaseOrdersIndexRouteImport
       parentRoute: typeof AuthenticatedAppRoute
     }
     '/_authenticated/app/inventory/': {
@@ -425,6 +445,7 @@ interface AuthenticatedAppRouteChildren {
   AuthenticatedAppEventsIndexRoute: typeof AuthenticatedAppEventsIndexRoute
   AuthenticatedAppFollowUpsIndexRoute: typeof AuthenticatedAppFollowUpsIndexRoute
   AuthenticatedAppInventoryIndexRoute: typeof AuthenticatedAppInventoryIndexRoute
+  AuthenticatedAppPurchaseOrdersIndexRoute: typeof AuthenticatedAppPurchaseOrdersIndexRoute
   AuthenticatedAppQuotationsIndexRoute: typeof AuthenticatedAppQuotationsIndexRoute
   AuthenticatedAppSettingsIndexRoute: typeof AuthenticatedAppSettingsIndexRoute
   AuthenticatedAppSuppliersIndexRoute: typeof AuthenticatedAppSuppliersIndexRoute
@@ -443,6 +464,8 @@ const AuthenticatedAppRouteChildren: AuthenticatedAppRouteChildren = {
   AuthenticatedAppEventsIndexRoute: AuthenticatedAppEventsIndexRoute,
   AuthenticatedAppFollowUpsIndexRoute: AuthenticatedAppFollowUpsIndexRoute,
   AuthenticatedAppInventoryIndexRoute: AuthenticatedAppInventoryIndexRoute,
+  AuthenticatedAppPurchaseOrdersIndexRoute:
+    AuthenticatedAppPurchaseOrdersIndexRoute,
   AuthenticatedAppQuotationsIndexRoute: AuthenticatedAppQuotationsIndexRoute,
   AuthenticatedAppSettingsIndexRoute: AuthenticatedAppSettingsIndexRoute,
   AuthenticatedAppSuppliersIndexRoute: AuthenticatedAppSuppliersIndexRoute,
