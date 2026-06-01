@@ -12,6 +12,9 @@ import {
   Settings,
   LogOut,
   Building2,
+  Package,
+  Truck,
+  ClipboardList,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -21,8 +24,12 @@ const nav = [
   { to: "/app/events", label: "Events", icon: CalendarDays },
   { to: "/app/quotations", label: "Quotations", icon: FileText },
   { to: "/app/follow-ups", label: "Follow-ups", icon: ListChecks },
+  { to: "/app/inventory", label: "Inventory", icon: Package },
+  { to: "/app/suppliers", label: "Suppliers", icon: Truck },
+  { to: "/app/purchase-orders", label: "Purchase orders", icon: ClipboardList },
   { to: "/app/settings", label: "Settings", icon: Settings },
 ];
+
 
 export function AppShell({ children }: { children: ReactNode }) {
   const { user, organizations, currentOrgId, setCurrentOrg, signOut } = useAuth();

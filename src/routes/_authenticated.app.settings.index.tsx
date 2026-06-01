@@ -102,9 +102,65 @@ function Settings() {
       </Card>
 
       {isAdmin && <InviteCard orgId={currentOrgId!} onChange={() => qc.invalidateQueries({ queryKey: ["members", currentOrgId] })} />}
+
+      <LocationsCard orgId={currentOrgId!} canEdit={roles.includes("admin") || roles.includes("manager")} />
     </div>
   );
 }
+
+function LocationsCard({ orgId, canEdit }: { orgId: string; canEdit: boolean }) {
+  const qc = useQueryClient();
+  const [name, setName] = useState("");
+  const [address, setAddress] = useState("");
+  const { data: locations = [] } = useQuery({
+    queryKey: ["locations", orgId],
+    queryFn: async () => {
+      const { data } = await supabase.from("locations").select("*").eq("organization_id", orgId).order("name");
+      return data ?? [];
+    },
+  });
+  const add = async () => {
+    if (!name) return;
+    const { error } = await supabase.from("locations").insert({ organization_id: orgId, name, address: address || null });
+    if (error) return toast.error(error.message);
+    setName(""); setAddress("");
+    qc.invalidateQueries({ queryKey: ["locations", orgId] });
+  };
+  const remove = async (id: string) => {
+    const { error } = await supabase.from("locations").delete().eq("id", id);
+    if (error) return toast.error(error.message);
+    qc.invalidateQueries({ queryKey: ["locations", orgId] });
+  };
+  return (
+    <Card>
+      <CardHeader><CardTitle>Locations</CardTitle><CardDescription>Warehouses or stores where you keep stock.</CardDescription></CardHeader>
+      <CardContent className="space-y-4">
+        <Table>
+          <TableHeader><TableRow><TableHead>Name</TableHead><TableHead>Address</TableHead><TableHead></TableHead></TableRow></TableHeader>
+          <TableBody>
+            {locations.length === 0 ? (
+              <TableRow><TableCell colSpan={3} className="py-4 text-center text-sm text-muted-foreground">No locations yet.</TableCell></TableRow>
+            ) : locations.map((l: any) => (
+              <TableRow key={l.id}>
+                <TableCell className="font-medium">{l.name}</TableCell>
+                <TableCell className="text-muted-foreground">{l.address ?? "—"}</TableCell>
+                <TableCell>{canEdit && <Button variant="ghost" size="sm" onClick={() => remove(l.id)}>Remove</Button>}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+        {canEdit && (
+          <div className="grid grid-cols-12 gap-2 border-t pt-4">
+            <Input className="col-span-4" placeholder="Location name" value={name} onChange={(e) => setName(e.target.value)} />
+            <Input className="col-span-6" placeholder="Address (optional)" value={address} onChange={(e) => setAddress(e.target.value)} />
+            <Button className="col-span-2" onClick={add} disabled={!name}>Add</Button>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
 
 function InviteCard({ orgId, onChange }: { orgId: string; onChange: () => void }) {
   const [userId, setUserId] = useState("");

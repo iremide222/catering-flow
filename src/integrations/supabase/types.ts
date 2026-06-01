@@ -276,6 +276,107 @@ export type Database = {
           },
         ]
       }
+      item_categories: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          organization_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          organization_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          organization_id?: string
+        }
+        Relationships: []
+      }
+      items: {
+        Row: {
+          category_id: string | null
+          created_at: string
+          default_cost: number
+          description: string | null
+          id: string
+          is_active: boolean
+          name: string
+          organization_id: string
+          reorder_level: number
+          sku: string | null
+          unit: string
+          updated_at: string
+        }
+        Insert: {
+          category_id?: string | null
+          created_at?: string
+          default_cost?: number
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          organization_id: string
+          reorder_level?: number
+          sku?: string | null
+          unit?: string
+          updated_at?: string
+        }
+        Update: {
+          category_id?: string | null
+          created_at?: string
+          default_cost?: number
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          organization_id?: string
+          reorder_level?: number
+          sku?: string | null
+          unit?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "items_category_fk"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "item_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      locations: {
+        Row: {
+          address: string | null
+          created_at: string
+          id: string
+          is_default: boolean
+          name: string
+          organization_id: string
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          id?: string
+          is_default?: boolean
+          name: string
+          organization_id: string
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          id?: string
+          is_default?: boolean
+          name?: string
+          organization_id?: string
+        }
+        Relationships: []
+      }
       organization_members: {
         Row: {
           joined_at: string
@@ -350,6 +451,130 @@ export type Database = {
         }
         Relationships: []
       }
+      purchase_order_items: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          item_id: string
+          purchase_order_id: string
+          quantity: number
+          received_quantity: number
+          unit_price: number
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          item_id: string
+          purchase_order_id: string
+          quantity?: number
+          received_quantity?: number
+          unit_price?: number
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          item_id?: string
+          purchase_order_id?: string
+          quantity?: number
+          received_quantity?: number
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "po_items_item_fk"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "po_items_po_fk"
+            columns: ["purchase_order_id"]
+            isOneToOne: false
+            referencedRelation: "purchase_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      purchase_orders: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          event_id: string | null
+          expected_date: string | null
+          id: string
+          location_id: string | null
+          notes: string | null
+          order_number: string | null
+          organization_id: string
+          status: Database["public"]["Enums"]["po_status"]
+          subtotal: number
+          supplier_id: string
+          tax_rate: number
+          total: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          event_id?: string | null
+          expected_date?: string | null
+          id?: string
+          location_id?: string | null
+          notes?: string | null
+          order_number?: string | null
+          organization_id: string
+          status?: Database["public"]["Enums"]["po_status"]
+          subtotal?: number
+          supplier_id: string
+          tax_rate?: number
+          total?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          event_id?: string | null
+          expected_date?: string | null
+          id?: string
+          location_id?: string | null
+          notes?: string | null
+          order_number?: string | null
+          organization_id?: string
+          status?: Database["public"]["Enums"]["po_status"]
+          subtotal?: number
+          supplier_id?: string
+          tax_rate?: number
+          total?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "po_event_fk"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "po_location_fk"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "po_supplier_fk"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       quotations: {
         Row: {
           created_at: string
@@ -405,6 +630,158 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      stock_levels: {
+        Row: {
+          id: string
+          item_id: string
+          location_id: string
+          organization_id: string
+          quantity: number
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          item_id: string
+          location_id: string
+          organization_id: string
+          quantity?: number
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          item_id?: string
+          location_id?: string
+          organization_id?: string
+          quantity?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stock_levels_item_fk"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stock_levels_location_fk"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      stock_movements: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          event_id: string | null
+          id: string
+          item_id: string
+          location_id: string
+          organization_id: string
+          purchase_order_id: string | null
+          quantity: number
+          reason: string | null
+          type: Database["public"]["Enums"]["stock_movement_type"]
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          event_id?: string | null
+          id?: string
+          item_id: string
+          location_id: string
+          organization_id: string
+          purchase_order_id?: string | null
+          quantity: number
+          reason?: string | null
+          type: Database["public"]["Enums"]["stock_movement_type"]
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          event_id?: string | null
+          id?: string
+          item_id?: string
+          location_id?: string
+          organization_id?: string
+          purchase_order_id?: string | null
+          quantity?: number
+          reason?: string | null
+          type?: Database["public"]["Enums"]["stock_movement_type"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stock_movements_event_fk"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stock_movements_item_fk"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stock_movements_location_fk"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stock_movements_po_fk"
+            columns: ["purchase_order_id"]
+            isOneToOne: false
+            referencedRelation: "purchase_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      suppliers: {
+        Row: {
+          address: string | null
+          contact_name: string | null
+          created_at: string
+          email: string | null
+          id: string
+          name: string
+          notes: string | null
+          organization_id: string
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          contact_name?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          organization_id: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          contact_name?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          organization_id?: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
       }
       user_roles: {
         Row: {
@@ -468,6 +845,11 @@ export type Database = {
         Args: { _org_id: string; _user_id: string }
         Returns: boolean
       }
+      po_org: { Args: { _po_id: string }; Returns: string }
+      receive_po_item: {
+        Args: { _location_id: string; _po_item_id: string; _quantity: number }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role: "admin" | "manager" | "accountant" | "store_manager" | "staff"
@@ -480,7 +862,15 @@ export type Database = {
         | "delivered"
         | "closed"
         | "cancelled"
+      po_status:
+        | "draft"
+        | "ordered"
+        | "partial"
+        | "received"
+        | "closed"
+        | "cancelled"
       quotation_status: "draft" | "sent" | "accepted" | "rejected" | "expired"
+      stock_movement_type: "in" | "out" | "adjust"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -619,7 +1009,16 @@ export const Constants = {
         "closed",
         "cancelled",
       ],
+      po_status: [
+        "draft",
+        "ordered",
+        "partial",
+        "received",
+        "closed",
+        "cancelled",
+      ],
       quotation_status: ["draft", "sent", "accepted", "rejected", "expired"],
+      stock_movement_type: ["in", "out", "adjust"],
     },
   },
 } as const

@@ -1,0 +1,12 @@
+alter table public.items add constraint items_category_fk foreign key (category_id) references public.item_categories(id) on delete set null;
+alter table public.stock_levels add constraint stock_levels_item_fk foreign key (item_id) references public.items(id) on delete cascade;
+alter table public.stock_levels add constraint stock_levels_location_fk foreign key (location_id) references public.locations(id) on delete cascade;
+alter table public.stock_movements add constraint stock_movements_item_fk foreign key (item_id) references public.items(id) on delete cascade;
+alter table public.stock_movements add constraint stock_movements_location_fk foreign key (location_id) references public.locations(id) on delete cascade;
+alter table public.stock_movements add constraint stock_movements_event_fk foreign key (event_id) references public.events(id) on delete set null;
+alter table public.stock_movements add constraint stock_movements_po_fk foreign key (purchase_order_id) references public.purchase_orders(id) on delete set null;
+alter table public.purchase_orders add constraint po_supplier_fk foreign key (supplier_id) references public.suppliers(id) on delete restrict;
+alter table public.purchase_orders add constraint po_event_fk foreign key (event_id) references public.events(id) on delete set null;
+alter table public.purchase_orders add constraint po_location_fk foreign key (location_id) references public.locations(id) on delete set null;
+alter table public.purchase_order_items add constraint po_items_po_fk foreign key (purchase_order_id) references public.purchase_orders(id) on delete cascade;
+alter table public.purchase_order_items add constraint po_items_item_fk foreign key (item_id) references public.items(id) on delete restrict;
