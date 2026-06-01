@@ -22,6 +22,7 @@ import { Route as AuthenticatedAppFollowUpsIndexRouteImport } from './routes/_au
 import { Route as AuthenticatedAppEventsIndexRouteImport } from './routes/_authenticated.app.events.index'
 import { Route as AuthenticatedAppCustomersIndexRouteImport } from './routes/_authenticated.app.customers.index'
 import { Route as AuthenticatedAppInventoryNewRouteImport } from './routes/_authenticated.app.inventory.new'
+import { Route as AuthenticatedAppInventoryIdRouteImport } from './routes/_authenticated.app.inventory.$id'
 import { Route as AuthenticatedAppEventsNewRouteImport } from './routes/_authenticated.app.events.new'
 import { Route as AuthenticatedAppEventsIdRouteImport } from './routes/_authenticated.app.events.$id'
 import { Route as AuthenticatedAppCustomersNewRouteImport } from './routes/_authenticated.app.customers.new'
@@ -100,6 +101,12 @@ const AuthenticatedAppInventoryNewRoute =
     path: '/inventory/new',
     getParentRoute: () => AuthenticatedAppRoute,
   } as any)
+const AuthenticatedAppInventoryIdRoute =
+  AuthenticatedAppInventoryIdRouteImport.update({
+    id: '/inventory/$id',
+    path: '/inventory/$id',
+    getParentRoute: () => AuthenticatedAppRoute,
+  } as any)
 const AuthenticatedAppEventsNewRoute =
   AuthenticatedAppEventsNewRouteImport.update({
     id: '/events/new',
@@ -136,6 +143,7 @@ export interface FileRoutesByFullPath {
   '/app/customers/new': typeof AuthenticatedAppCustomersNewRoute
   '/app/events/$id': typeof AuthenticatedAppEventsIdRoute
   '/app/events/new': typeof AuthenticatedAppEventsNewRoute
+  '/app/inventory/$id': typeof AuthenticatedAppInventoryIdRoute
   '/app/inventory/new': typeof AuthenticatedAppInventoryNewRoute
   '/app/customers/': typeof AuthenticatedAppCustomersIndexRoute
   '/app/events/': typeof AuthenticatedAppEventsIndexRoute
@@ -154,6 +162,7 @@ export interface FileRoutesByTo {
   '/app/customers/new': typeof AuthenticatedAppCustomersNewRoute
   '/app/events/$id': typeof AuthenticatedAppEventsIdRoute
   '/app/events/new': typeof AuthenticatedAppEventsNewRoute
+  '/app/inventory/$id': typeof AuthenticatedAppInventoryIdRoute
   '/app/inventory/new': typeof AuthenticatedAppInventoryNewRoute
   '/app/customers': typeof AuthenticatedAppCustomersIndexRoute
   '/app/events': typeof AuthenticatedAppEventsIndexRoute
@@ -174,6 +183,7 @@ export interface FileRoutesById {
   '/_authenticated/app/customers/new': typeof AuthenticatedAppCustomersNewRoute
   '/_authenticated/app/events/$id': typeof AuthenticatedAppEventsIdRoute
   '/_authenticated/app/events/new': typeof AuthenticatedAppEventsNewRoute
+  '/_authenticated/app/inventory/$id': typeof AuthenticatedAppInventoryIdRoute
   '/_authenticated/app/inventory/new': typeof AuthenticatedAppInventoryNewRoute
   '/_authenticated/app/customers/': typeof AuthenticatedAppCustomersIndexRoute
   '/_authenticated/app/events/': typeof AuthenticatedAppEventsIndexRoute
@@ -195,6 +205,7 @@ export interface FileRouteTypes {
     | '/app/customers/new'
     | '/app/events/$id'
     | '/app/events/new'
+    | '/app/inventory/$id'
     | '/app/inventory/new'
     | '/app/customers/'
     | '/app/events/'
@@ -213,6 +224,7 @@ export interface FileRouteTypes {
     | '/app/customers/new'
     | '/app/events/$id'
     | '/app/events/new'
+    | '/app/inventory/$id'
     | '/app/inventory/new'
     | '/app/customers'
     | '/app/events'
@@ -232,6 +244,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/customers/new'
     | '/_authenticated/app/events/$id'
     | '/_authenticated/app/events/new'
+    | '/_authenticated/app/inventory/$id'
     | '/_authenticated/app/inventory/new'
     | '/_authenticated/app/customers/'
     | '/_authenticated/app/events/'
@@ -341,6 +354,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppInventoryNewRouteImport
       parentRoute: typeof AuthenticatedAppRoute
     }
+    '/_authenticated/app/inventory/$id': {
+      id: '/_authenticated/app/inventory/$id'
+      path: '/inventory/$id'
+      fullPath: '/app/inventory/$id'
+      preLoaderRoute: typeof AuthenticatedAppInventoryIdRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
     '/_authenticated/app/events/new': {
       id: '/_authenticated/app/events/new'
       path: '/events/new'
@@ -379,6 +399,7 @@ interface AuthenticatedAppRouteChildren {
   AuthenticatedAppCustomersNewRoute: typeof AuthenticatedAppCustomersNewRoute
   AuthenticatedAppEventsIdRoute: typeof AuthenticatedAppEventsIdRoute
   AuthenticatedAppEventsNewRoute: typeof AuthenticatedAppEventsNewRoute
+  AuthenticatedAppInventoryIdRoute: typeof AuthenticatedAppInventoryIdRoute
   AuthenticatedAppInventoryNewRoute: typeof AuthenticatedAppInventoryNewRoute
   AuthenticatedAppCustomersIndexRoute: typeof AuthenticatedAppCustomersIndexRoute
   AuthenticatedAppEventsIndexRoute: typeof AuthenticatedAppEventsIndexRoute
@@ -395,6 +416,7 @@ const AuthenticatedAppRouteChildren: AuthenticatedAppRouteChildren = {
   AuthenticatedAppCustomersNewRoute: AuthenticatedAppCustomersNewRoute,
   AuthenticatedAppEventsIdRoute: AuthenticatedAppEventsIdRoute,
   AuthenticatedAppEventsNewRoute: AuthenticatedAppEventsNewRoute,
+  AuthenticatedAppInventoryIdRoute: AuthenticatedAppInventoryIdRoute,
   AuthenticatedAppInventoryNewRoute: AuthenticatedAppInventoryNewRoute,
   AuthenticatedAppCustomersIndexRoute: AuthenticatedAppCustomersIndexRoute,
   AuthenticatedAppEventsIndexRoute: AuthenticatedAppEventsIndexRoute,
