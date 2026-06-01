@@ -15,6 +15,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedAppRouteImport } from './routes/_authenticated.app'
 import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticated.app.index'
 import { Route as AuthenticatedAppOnboardingRouteImport } from './routes/_authenticated.app.onboarding'
+import { Route as AuthenticatedAppSuppliersIndexRouteImport } from './routes/_authenticated.app.suppliers.index'
 import { Route as AuthenticatedAppSettingsIndexRouteImport } from './routes/_authenticated.app.settings.index'
 import { Route as AuthenticatedAppQuotationsIndexRouteImport } from './routes/_authenticated.app.quotations.index'
 import { Route as AuthenticatedAppInventoryIndexRouteImport } from './routes/_authenticated.app.inventory.index'
@@ -57,6 +58,12 @@ const AuthenticatedAppOnboardingRoute =
   AuthenticatedAppOnboardingRouteImport.update({
     id: '/onboarding',
     path: '/onboarding',
+    getParentRoute: () => AuthenticatedAppRoute,
+  } as any)
+const AuthenticatedAppSuppliersIndexRoute =
+  AuthenticatedAppSuppliersIndexRouteImport.update({
+    id: '/suppliers/',
+    path: '/suppliers/',
     getParentRoute: () => AuthenticatedAppRoute,
   } as any)
 const AuthenticatedAppSettingsIndexRoute =
@@ -151,6 +158,7 @@ export interface FileRoutesByFullPath {
   '/app/inventory/': typeof AuthenticatedAppInventoryIndexRoute
   '/app/quotations/': typeof AuthenticatedAppQuotationsIndexRoute
   '/app/settings/': typeof AuthenticatedAppSettingsIndexRoute
+  '/app/suppliers/': typeof AuthenticatedAppSuppliersIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -170,6 +178,7 @@ export interface FileRoutesByTo {
   '/app/inventory': typeof AuthenticatedAppInventoryIndexRoute
   '/app/quotations': typeof AuthenticatedAppQuotationsIndexRoute
   '/app/settings': typeof AuthenticatedAppSettingsIndexRoute
+  '/app/suppliers': typeof AuthenticatedAppSuppliersIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -191,6 +200,7 @@ export interface FileRoutesById {
   '/_authenticated/app/inventory/': typeof AuthenticatedAppInventoryIndexRoute
   '/_authenticated/app/quotations/': typeof AuthenticatedAppQuotationsIndexRoute
   '/_authenticated/app/settings/': typeof AuthenticatedAppSettingsIndexRoute
+  '/_authenticated/app/suppliers/': typeof AuthenticatedAppSuppliersIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -213,6 +223,7 @@ export interface FileRouteTypes {
     | '/app/inventory/'
     | '/app/quotations/'
     | '/app/settings/'
+    | '/app/suppliers/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -232,6 +243,7 @@ export interface FileRouteTypes {
     | '/app/inventory'
     | '/app/quotations'
     | '/app/settings'
+    | '/app/suppliers'
   id:
     | '__root__'
     | '/'
@@ -252,6 +264,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/inventory/'
     | '/_authenticated/app/quotations/'
     | '/_authenticated/app/settings/'
+    | '/_authenticated/app/suppliers/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -303,6 +316,13 @@ declare module '@tanstack/react-router' {
       path: '/onboarding'
       fullPath: '/app/onboarding'
       preLoaderRoute: typeof AuthenticatedAppOnboardingRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/app/suppliers/': {
+      id: '/_authenticated/app/suppliers/'
+      path: '/suppliers'
+      fullPath: '/app/suppliers/'
+      preLoaderRoute: typeof AuthenticatedAppSuppliersIndexRouteImport
       parentRoute: typeof AuthenticatedAppRoute
     }
     '/_authenticated/app/settings/': {
@@ -407,6 +427,7 @@ interface AuthenticatedAppRouteChildren {
   AuthenticatedAppInventoryIndexRoute: typeof AuthenticatedAppInventoryIndexRoute
   AuthenticatedAppQuotationsIndexRoute: typeof AuthenticatedAppQuotationsIndexRoute
   AuthenticatedAppSettingsIndexRoute: typeof AuthenticatedAppSettingsIndexRoute
+  AuthenticatedAppSuppliersIndexRoute: typeof AuthenticatedAppSuppliersIndexRoute
 }
 
 const AuthenticatedAppRouteChildren: AuthenticatedAppRouteChildren = {
@@ -424,6 +445,7 @@ const AuthenticatedAppRouteChildren: AuthenticatedAppRouteChildren = {
   AuthenticatedAppInventoryIndexRoute: AuthenticatedAppInventoryIndexRoute,
   AuthenticatedAppQuotationsIndexRoute: AuthenticatedAppQuotationsIndexRoute,
   AuthenticatedAppSettingsIndexRoute: AuthenticatedAppSettingsIndexRoute,
+  AuthenticatedAppSuppliersIndexRoute: AuthenticatedAppSuppliersIndexRoute,
 }
 
 const AuthenticatedAppRouteWithChildren =
