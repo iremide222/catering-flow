@@ -29,14 +29,44 @@ function EventDetail() {
   const { data } = useQuery({
     queryKey: ["event", id],
     queryFn: async () => {
-      const [{ data: event }, { data: items }, { data: quotes }] = await Promise.all([
+      const [{ data: event }, { data: items }, { data: quotes }, { data: assigns }, { data: tasks }] = await Promise.all([
         supabase.from("events").select("*, customers(id,name,email,phone)").eq("id", id).maybeSingle(),
         supabase.from("event_items").select("*").eq("event_id", id).order("created_at"),
         supabase.from("quotations").select("*").eq("event_id", id).order("version", { ascending: false }),
+        supabase.from("event_staff_assignments").select("*, staff_members(id,name,role_title)").eq("event_id", id),
+        supabase.from("tasks").select("*, staff_members:assigned_to_staff_id(name)").eq("event_id", id).order("created_at", { ascending: false }),
       ]);
-      return { event, items: items ?? [], quotes: quotes ?? [] };
+      return { event, items: items ?? [], quotes: quotes ?? [], assigns: assigns ?? [], tasks: tasks ?? [] };
     },
   });
+
+  const { data: staffList = [] } = useQuery({
+    queryKey: ["staff-lite", currentOrgId],
+    enabled: !!currentOrgId,
+    queryFn: async () => {
+      const { data } = await supabase.from("staff_members").select("id, name, role_title").eq("organization_id", currentOrgId!).eq("is_active", true).order("name");
+      return data ?? [];
+    },
+  });
+
+  const [staffPick, setStaffPick] = useState<string>("");
+  const [staffRole, setStaffRole] = useState<string>("");
+
+  const assignStaff = async () => {
+    if (!staffPick) return;
+    const { error } = await supabase.from("event_staff_assignments").insert({
+      event_id: id, staff_member_id: staffPick, role: staffRole || null,
+    });
+    if (error) return toast.error(error.message);
+    setStaffPick(""); setStaffRole("");
+    qc.invalidateQueries({ queryKey: ["event", id] });
+  };
+
+  const unassignStaff = async (assignId: string) => {
+    const { error } = await supabase.from("event_staff_assignments").delete().eq("id", assignId);
+    if (error) return toast.error(error.message);
+    qc.invalidateQueries({ queryKey: ["event", id] });
+  };
 
   const [newItem, setNewItem] = useState({ name: "", quantity: "1", unit_price: "0" });
 
