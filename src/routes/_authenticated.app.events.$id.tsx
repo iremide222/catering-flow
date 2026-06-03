@@ -29,14 +29,44 @@ function EventDetail() {
   const { data } = useQuery({
     queryKey: ["event", id],
     queryFn: async () => {
-      const [{ data: event }, { data: items }, { data: quotes }] = await Promise.all([
+      const [{ data: event }, { data: items }, { data: quotes }, { data: assigns }, { data: tasks }] = await Promise.all([
         supabase.from("events").select("*, customers(id,name,email,phone)").eq("id", id).maybeSingle(),
         supabase.from("event_items").select("*").eq("event_id", id).order("created_at"),
         supabase.from("quotations").select("*").eq("event_id", id).order("version", { ascending: false }),
+        supabase.from("event_staff_assignments").select("*, staff_members(id,name,role_title)").eq("event_id", id),
+        supabase.from("tasks").select("*, staff_members:assigned_to_staff_id(name)").eq("event_id", id).order("created_at", { ascending: false }),
       ]);
-      return { event, items: items ?? [], quotes: quotes ?? [] };
+      return { event, items: items ?? [], quotes: quotes ?? [], assigns: assigns ?? [], tasks: tasks ?? [] };
     },
   });
+
+  const { data: staffList = [] } = useQuery({
+    queryKey: ["staff-lite", currentOrgId],
+    enabled: !!currentOrgId,
+    queryFn: async () => {
+      const { data } = await supabase.from("staff_members").select("id, name, role_title").eq("organization_id", currentOrgId!).eq("is_active", true).order("name");
+      return data ?? [];
+    },
+  });
+
+  const [staffPick, setStaffPick] = useState<string>("");
+  const [staffRole, setStaffRole] = useState<string>("");
+
+  const assignStaff = async () => {
+    if (!staffPick) return;
+    const { error } = await supabase.from("event_staff_assignments").insert({
+      event_id: id, staff_member_id: staffPick, role: staffRole || null,
+    });
+    if (error) return toast.error(error.message);
+    setStaffPick(""); setStaffRole("");
+    qc.invalidateQueries({ queryKey: ["event", id] });
+  };
+
+  const unassignStaff = async (assignId: string) => {
+    const { error } = await supabase.from("event_staff_assignments").delete().eq("id", assignId);
+    if (error) return toast.error(error.message);
+    qc.invalidateQueries({ queryKey: ["event", id] });
+  };
 
   const [newItem, setNewItem] = useState({ name: "", quantity: "1", unit_price: "0" });
 
@@ -177,6 +207,68 @@ function EventDetail() {
                 ))}
               </TableBody>
             </Table>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader><CardTitle>Staff assigned</CardTitle></CardHeader>
+        <CardContent className="space-y-4">
+          {data.assigns.length === 0 ? (
+            <div className="py-3 text-sm text-muted-foreground">No staff assigned yet.</div>
+          ) : (
+            <Table>
+              <TableHeader><TableRow>
+                <TableHead>Name</TableHead><TableHead>Role on event</TableHead><TableHead className="w-12"></TableHead>
+              </TableRow></TableHeader>
+              <TableBody>
+                {data.assigns.map((a: any) => (
+                  <TableRow key={a.id}>
+                    <TableCell className="font-medium">{a.staff_members?.name ?? "—"}</TableCell>
+                    <TableCell className="text-muted-foreground">{a.role ?? a.staff_members?.role_title ?? "—"}</TableCell>
+                    <TableCell><Button variant="ghost" size="icon" onClick={() => unassignStaff(a.id)}><Trash2 className="h-4 w-4" /></Button></TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
+          <div className="grid grid-cols-12 gap-2 border-t pt-4">
+            <Select value={staffPick} onValueChange={setStaffPick}>
+              <SelectTrigger className="col-span-6"><SelectValue placeholder="Pick staff member" /></SelectTrigger>
+              <SelectContent>
+                {staffList.filter((s: any) => !data.assigns.some((a: any) => a.staff_member_id === s.id)).map((s: any) => (
+                  <SelectItem key={s.id} value={s.id}>{s.name}{s.role_title ? ` · ${s.role_title}` : ""}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Input className="col-span-4" placeholder="Role on event" value={staffRole} onChange={(e) => setStaffRole(e.target.value)} />
+            <Button className="col-span-2" onClick={assignStaff}>Assign</Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle>Tasks</CardTitle>
+          <Link to="/app/tasks" className="text-sm text-primary hover:underline">Open board →</Link>
+        </CardHeader>
+        <CardContent>
+          {data.tasks.length === 0 ? (
+            <div className="py-3 text-sm text-muted-foreground">No tasks for this event yet.</div>
+          ) : (
+            <ul className="space-y-2 text-sm">
+              {data.tasks.map((t: any) => (
+                <li key={t.id} className="flex items-center justify-between rounded-md border px-3 py-2">
+                  <div>
+                    <div className="font-medium">{t.title}</div>
+                    <div className="text-xs text-muted-foreground">
+                      {t.status} · {t.priority}{t.due_date ? ` · due ${t.due_date}` : ""}{t.staff_members?.name ? ` · ${t.staff_members.name}` : ""}
+                    </div>
+                  </div>
+                  <Badge variant="outline">{t.status}</Badge>
+                </li>
+              ))}
+            </ul>
           )}
         </CardContent>
       </Card>
