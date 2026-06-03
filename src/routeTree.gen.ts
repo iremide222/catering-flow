@@ -16,6 +16,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedAppRouteImport } from './routes/_authenticated.app'
 import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticated.app.index'
 import { Route as AuthenticatedAppOnboardingRouteImport } from './routes/_authenticated.app.onboarding'
+import { Route as AuthenticatedAppTasksIndexRouteImport } from './routes/_authenticated.app.tasks.index'
 import { Route as AuthenticatedAppSuppliersIndexRouteImport } from './routes/_authenticated.app.suppliers.index'
 import { Route as AuthenticatedAppStaffIndexRouteImport } from './routes/_authenticated.app.staff.index'
 import { Route as AuthenticatedAppSettingsIndexRouteImport } from './routes/_authenticated.app.settings.index'
@@ -67,6 +68,12 @@ const AuthenticatedAppOnboardingRoute =
   AuthenticatedAppOnboardingRouteImport.update({
     id: '/onboarding',
     path: '/onboarding',
+    getParentRoute: () => AuthenticatedAppRoute,
+  } as any)
+const AuthenticatedAppTasksIndexRoute =
+  AuthenticatedAppTasksIndexRouteImport.update({
+    id: '/tasks/',
+    path: '/tasks/',
     getParentRoute: () => AuthenticatedAppRoute,
   } as any)
 const AuthenticatedAppSuppliersIndexRoute =
@@ -196,6 +203,7 @@ export interface FileRoutesByFullPath {
   '/app/settings/': typeof AuthenticatedAppSettingsIndexRoute
   '/app/staff/': typeof AuthenticatedAppStaffIndexRoute
   '/app/suppliers/': typeof AuthenticatedAppSuppliersIndexRoute
+  '/app/tasks/': typeof AuthenticatedAppTasksIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -220,6 +228,7 @@ export interface FileRoutesByTo {
   '/app/settings': typeof AuthenticatedAppSettingsIndexRoute
   '/app/staff': typeof AuthenticatedAppStaffIndexRoute
   '/app/suppliers': typeof AuthenticatedAppSuppliersIndexRoute
+  '/app/tasks': typeof AuthenticatedAppTasksIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -247,6 +256,7 @@ export interface FileRoutesById {
   '/_authenticated/app/settings/': typeof AuthenticatedAppSettingsIndexRoute
   '/_authenticated/app/staff/': typeof AuthenticatedAppStaffIndexRoute
   '/_authenticated/app/suppliers/': typeof AuthenticatedAppSuppliersIndexRoute
+  '/_authenticated/app/tasks/': typeof AuthenticatedAppTasksIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -274,6 +284,7 @@ export interface FileRouteTypes {
     | '/app/settings/'
     | '/app/staff/'
     | '/app/suppliers/'
+    | '/app/tasks/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -298,6 +309,7 @@ export interface FileRouteTypes {
     | '/app/settings'
     | '/app/staff'
     | '/app/suppliers'
+    | '/app/tasks'
   id:
     | '__root__'
     | '/'
@@ -324,6 +336,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/settings/'
     | '/_authenticated/app/staff/'
     | '/_authenticated/app/suppliers/'
+    | '/_authenticated/app/tasks/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -382,6 +395,13 @@ declare module '@tanstack/react-router' {
       path: '/onboarding'
       fullPath: '/app/onboarding'
       preLoaderRoute: typeof AuthenticatedAppOnboardingRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/app/tasks/': {
+      id: '/_authenticated/app/tasks/'
+      path: '/tasks'
+      fullPath: '/app/tasks/'
+      preLoaderRoute: typeof AuthenticatedAppTasksIndexRouteImport
       parentRoute: typeof AuthenticatedAppRoute
     }
     '/_authenticated/app/suppliers/': {
@@ -526,6 +546,7 @@ interface AuthenticatedAppRouteChildren {
   AuthenticatedAppSettingsIndexRoute: typeof AuthenticatedAppSettingsIndexRoute
   AuthenticatedAppStaffIndexRoute: typeof AuthenticatedAppStaffIndexRoute
   AuthenticatedAppSuppliersIndexRoute: typeof AuthenticatedAppSuppliersIndexRoute
+  AuthenticatedAppTasksIndexRoute: typeof AuthenticatedAppTasksIndexRoute
 }
 
 const AuthenticatedAppRouteChildren: AuthenticatedAppRouteChildren = {
@@ -550,6 +571,7 @@ const AuthenticatedAppRouteChildren: AuthenticatedAppRouteChildren = {
   AuthenticatedAppSettingsIndexRoute: AuthenticatedAppSettingsIndexRoute,
   AuthenticatedAppStaffIndexRoute: AuthenticatedAppStaffIndexRoute,
   AuthenticatedAppSuppliersIndexRoute: AuthenticatedAppSuppliersIndexRoute,
+  AuthenticatedAppTasksIndexRoute: AuthenticatedAppTasksIndexRoute,
 }
 
 const AuthenticatedAppRouteWithChildren =
