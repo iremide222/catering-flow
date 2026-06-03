@@ -211,6 +211,68 @@ function EventDetail() {
         </CardContent>
       </Card>
 
+      <Card>
+        <CardHeader><CardTitle>Staff assigned</CardTitle></CardHeader>
+        <CardContent className="space-y-4">
+          {data.assigns.length === 0 ? (
+            <div className="py-3 text-sm text-muted-foreground">No staff assigned yet.</div>
+          ) : (
+            <Table>
+              <TableHeader><TableRow>
+                <TableHead>Name</TableHead><TableHead>Role on event</TableHead><TableHead className="w-12"></TableHead>
+              </TableRow></TableHeader>
+              <TableBody>
+                {data.assigns.map((a: any) => (
+                  <TableRow key={a.id}>
+                    <TableCell className="font-medium">{a.staff_members?.name ?? "—"}</TableCell>
+                    <TableCell className="text-muted-foreground">{a.role ?? a.staff_members?.role_title ?? "—"}</TableCell>
+                    <TableCell><Button variant="ghost" size="icon" onClick={() => unassignStaff(a.id)}><Trash2 className="h-4 w-4" /></Button></TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
+          <div className="grid grid-cols-12 gap-2 border-t pt-4">
+            <Select value={staffPick} onValueChange={setStaffPick}>
+              <SelectTrigger className="col-span-6"><SelectValue placeholder="Pick staff member" /></SelectTrigger>
+              <SelectContent>
+                {staffList.filter((s: any) => !data.assigns.some((a: any) => a.staff_member_id === s.id)).map((s: any) => (
+                  <SelectItem key={s.id} value={s.id}>{s.name}{s.role_title ? ` · ${s.role_title}` : ""}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Input className="col-span-4" placeholder="Role on event" value={staffRole} onChange={(e) => setStaffRole(e.target.value)} />
+            <Button className="col-span-2" onClick={assignStaff}>Assign</Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle>Tasks</CardTitle>
+          <Link to="/app/tasks" className="text-sm text-primary hover:underline">Open board →</Link>
+        </CardHeader>
+        <CardContent>
+          {data.tasks.length === 0 ? (
+            <div className="py-3 text-sm text-muted-foreground">No tasks for this event yet.</div>
+          ) : (
+            <ul className="space-y-2 text-sm">
+              {data.tasks.map((t: any) => (
+                <li key={t.id} className="flex items-center justify-between rounded-md border px-3 py-2">
+                  <div>
+                    <div className="font-medium">{t.title}</div>
+                    <div className="text-xs text-muted-foreground">
+                      {t.status} · {t.priority}{t.due_date ? ` · due ${t.due_date}` : ""}{t.staff_members?.name ? ` · ${t.staff_members.name}` : ""}
+                    </div>
+                  </div>
+                  <Badge variant="outline">{t.status}</Badge>
+                </li>
+              ))}
+            </ul>
+          )}
+        </CardContent>
+      </Card>
+
       {e.notes && (
         <Card>
           <CardHeader><CardTitle>Notes</CardTitle></CardHeader>
