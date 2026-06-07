@@ -65,7 +65,7 @@ function InvoiceDetail() {
   const balance = Number(invoice.total) - Number(invoice.amount_paid);
 
   const setStatus = async (status: string) => {
-    const { error } = await supabase.from("invoices").update({ status }).eq("id", id);
+    const { error } = await supabase.from("invoices").update({ status: status as any }).eq("id", id);
     if (error) return toast.error(error.message);
     qc.invalidateQueries({ queryKey: ["invoice", id] });
     qc.invalidateQueries({ queryKey: ["invoices"] });
