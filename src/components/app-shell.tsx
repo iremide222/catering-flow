@@ -17,6 +17,7 @@ import {
   ClipboardList,
   UserCog,
   CheckSquare,
+  Receipt,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -25,6 +26,7 @@ const nav = [
   { to: "/app/customers", label: "Customers", icon: Users },
   { to: "/app/events", label: "Events", icon: CalendarDays },
   { to: "/app/quotations", label: "Quotations", icon: FileText },
+  { to: "/app/invoices", label: "Invoices", icon: Receipt },
   { to: "/app/tasks", label: "Tasks", icon: CheckSquare },
   { to: "/app/follow-ups", label: "Follow-ups", icon: ListChecks },
   { to: "/app/staff", label: "Staff", icon: UserCog },
@@ -33,6 +35,7 @@ const nav = [
   { to: "/app/purchase-orders", label: "Purchase orders", icon: ClipboardList },
   { to: "/app/settings", label: "Settings", icon: Settings },
 ];
+
 
 
 export function AppShell({ children }: { children: ReactNode }) {
