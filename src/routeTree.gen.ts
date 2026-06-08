@@ -20,6 +20,7 @@ import { Route as AuthenticatedAppTasksIndexRouteImport } from './routes/_authen
 import { Route as AuthenticatedAppSuppliersIndexRouteImport } from './routes/_authenticated.app.suppliers.index'
 import { Route as AuthenticatedAppStaffIndexRouteImport } from './routes/_authenticated.app.staff.index'
 import { Route as AuthenticatedAppSettingsIndexRouteImport } from './routes/_authenticated.app.settings.index'
+import { Route as AuthenticatedAppReportsIndexRouteImport } from './routes/_authenticated.app.reports.index'
 import { Route as AuthenticatedAppQuotationsIndexRouteImport } from './routes/_authenticated.app.quotations.index'
 import { Route as AuthenticatedAppPurchaseOrdersIndexRouteImport } from './routes/_authenticated.app.purchase-orders.index'
 import { Route as AuthenticatedAppInvoicesIndexRouteImport } from './routes/_authenticated.app.invoices.index'
@@ -95,6 +96,12 @@ const AuthenticatedAppSettingsIndexRoute =
   AuthenticatedAppSettingsIndexRouteImport.update({
     id: '/settings/',
     path: '/settings/',
+    getParentRoute: () => AuthenticatedAppRoute,
+  } as any)
+const AuthenticatedAppReportsIndexRoute =
+  AuthenticatedAppReportsIndexRouteImport.update({
+    id: '/reports/',
+    path: '/reports/',
     getParentRoute: () => AuthenticatedAppRoute,
   } as any)
 const AuthenticatedAppQuotationsIndexRoute =
@@ -224,6 +231,7 @@ export interface FileRoutesByFullPath {
   '/app/invoices/': typeof AuthenticatedAppInvoicesIndexRoute
   '/app/purchase-orders/': typeof AuthenticatedAppPurchaseOrdersIndexRoute
   '/app/quotations/': typeof AuthenticatedAppQuotationsIndexRoute
+  '/app/reports/': typeof AuthenticatedAppReportsIndexRoute
   '/app/settings/': typeof AuthenticatedAppSettingsIndexRoute
   '/app/staff/': typeof AuthenticatedAppStaffIndexRoute
   '/app/suppliers/': typeof AuthenticatedAppSuppliersIndexRoute
@@ -252,6 +260,7 @@ export interface FileRoutesByTo {
   '/app/invoices': typeof AuthenticatedAppInvoicesIndexRoute
   '/app/purchase-orders': typeof AuthenticatedAppPurchaseOrdersIndexRoute
   '/app/quotations': typeof AuthenticatedAppQuotationsIndexRoute
+  '/app/reports': typeof AuthenticatedAppReportsIndexRoute
   '/app/settings': typeof AuthenticatedAppSettingsIndexRoute
   '/app/staff': typeof AuthenticatedAppStaffIndexRoute
   '/app/suppliers': typeof AuthenticatedAppSuppliersIndexRoute
@@ -283,6 +292,7 @@ export interface FileRoutesById {
   '/_authenticated/app/invoices/': typeof AuthenticatedAppInvoicesIndexRoute
   '/_authenticated/app/purchase-orders/': typeof AuthenticatedAppPurchaseOrdersIndexRoute
   '/_authenticated/app/quotations/': typeof AuthenticatedAppQuotationsIndexRoute
+  '/_authenticated/app/reports/': typeof AuthenticatedAppReportsIndexRoute
   '/_authenticated/app/settings/': typeof AuthenticatedAppSettingsIndexRoute
   '/_authenticated/app/staff/': typeof AuthenticatedAppStaffIndexRoute
   '/_authenticated/app/suppliers/': typeof AuthenticatedAppSuppliersIndexRoute
@@ -314,6 +324,7 @@ export interface FileRouteTypes {
     | '/app/invoices/'
     | '/app/purchase-orders/'
     | '/app/quotations/'
+    | '/app/reports/'
     | '/app/settings/'
     | '/app/staff/'
     | '/app/suppliers/'
@@ -342,6 +353,7 @@ export interface FileRouteTypes {
     | '/app/invoices'
     | '/app/purchase-orders'
     | '/app/quotations'
+    | '/app/reports'
     | '/app/settings'
     | '/app/staff'
     | '/app/suppliers'
@@ -372,6 +384,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/invoices/'
     | '/_authenticated/app/purchase-orders/'
     | '/_authenticated/app/quotations/'
+    | '/_authenticated/app/reports/'
     | '/_authenticated/app/settings/'
     | '/_authenticated/app/staff/'
     | '/_authenticated/app/suppliers/'
@@ -462,6 +475,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/app/settings/'
       preLoaderRoute: typeof AuthenticatedAppSettingsIndexRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/app/reports/': {
+      id: '/_authenticated/app/reports/'
+      path: '/reports'
+      fullPath: '/app/reports/'
+      preLoaderRoute: typeof AuthenticatedAppReportsIndexRouteImport
       parentRoute: typeof AuthenticatedAppRoute
     }
     '/_authenticated/app/quotations/': {
@@ -606,6 +626,7 @@ interface AuthenticatedAppRouteChildren {
   AuthenticatedAppInvoicesIndexRoute: typeof AuthenticatedAppInvoicesIndexRoute
   AuthenticatedAppPurchaseOrdersIndexRoute: typeof AuthenticatedAppPurchaseOrdersIndexRoute
   AuthenticatedAppQuotationsIndexRoute: typeof AuthenticatedAppQuotationsIndexRoute
+  AuthenticatedAppReportsIndexRoute: typeof AuthenticatedAppReportsIndexRoute
   AuthenticatedAppSettingsIndexRoute: typeof AuthenticatedAppSettingsIndexRoute
   AuthenticatedAppStaffIndexRoute: typeof AuthenticatedAppStaffIndexRoute
   AuthenticatedAppSuppliersIndexRoute: typeof AuthenticatedAppSuppliersIndexRoute
@@ -634,6 +655,7 @@ const AuthenticatedAppRouteChildren: AuthenticatedAppRouteChildren = {
   AuthenticatedAppPurchaseOrdersIndexRoute:
     AuthenticatedAppPurchaseOrdersIndexRoute,
   AuthenticatedAppQuotationsIndexRoute: AuthenticatedAppQuotationsIndexRoute,
+  AuthenticatedAppReportsIndexRoute: AuthenticatedAppReportsIndexRoute,
   AuthenticatedAppSettingsIndexRoute: AuthenticatedAppSettingsIndexRoute,
   AuthenticatedAppStaffIndexRoute: AuthenticatedAppStaffIndexRoute,
   AuthenticatedAppSuppliersIndexRoute: AuthenticatedAppSuppliersIndexRoute,
@@ -663,13 +685,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
