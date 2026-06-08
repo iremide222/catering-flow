@@ -18,11 +18,13 @@ import {
   UserCog,
   CheckSquare,
   Receipt,
+  BarChart3,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const nav = [
   { to: "/app", label: "Dashboard", icon: LayoutDashboard, exact: true },
+  { to: "/app/reports", label: "Reports", icon: BarChart3 },
   { to: "/app/customers", label: "Customers", icon: Users },
   { to: "/app/events", label: "Events", icon: CalendarDays },
   { to: "/app/quotations", label: "Quotations", icon: FileText },
