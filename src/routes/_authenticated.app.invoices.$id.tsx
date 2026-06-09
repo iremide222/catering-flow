@@ -10,10 +10,13 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Plus, Trash2, ArrowLeft } from "lucide-react";
+import { Plus, Trash2, ArrowLeft, Download } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { formatCurrency, formatDate } from "@/lib/format";
+import { useServerFn } from "@tanstack/react-start";
+import { generateInvoicePdf } from "@/lib/pdf.functions";
+import { downloadBase64Pdf } from "@/lib/download-pdf";
 
 export const Route = createFileRoute("/_authenticated/app/invoices/$id")({
   head: () => ({ meta: [{ title: "Invoice — CaterFlow" }] }),
@@ -32,6 +35,19 @@ function InvoiceDetail() {
   const currency = organizations.find((o) => o.id === currentOrgId)?.currency ?? "USD";
   const [payOpen, setPayOpen] = useState(false);
   const [pay, setPay] = useState({ amount: "", payment_date: new Date().toISOString().slice(0, 10), method: "", reference: "", notes: "" });
+  const [pdfBusy, setPdfBusy] = useState(false);
+  const makePdf = useServerFn(generateInvoicePdf);
+  const downloadPdf = async () => {
+    setPdfBusy(true);
+    try {
+      const res = await makePdf({ data: { id } });
+      downloadBase64Pdf(res.base64, res.filename);
+    } catch (e: any) {
+      toast.error(e?.message ?? "Failed to generate PDF");
+    } finally {
+      setPdfBusy(false);
+    }
+  };
 
   const { data: invoice } = useQuery({
     queryKey: ["invoice", id],
@@ -133,6 +149,9 @@ function InvoiceDetail() {
             </SelectContent>
           </Select>
           <Badge variant={STATUS_VARIANT[invoice.status]}>{invoice.status}</Badge>
+          <Button variant="outline" size="sm" onClick={downloadPdf} disabled={pdfBusy}>
+            <Download className="mr-1 h-4 w-4" />{pdfBusy ? "Preparing…" : "PDF"}
+          </Button>
           <Button variant="outline" size="sm" onClick={deleteInvoice}><Trash2 className="h-4 w-4" /></Button>
         </div>
       </div>
