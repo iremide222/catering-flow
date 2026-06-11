@@ -28,6 +28,13 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+const BELL_ICON: Record<string, React.ElementType> = {
+  low_stock: Package,
+  overdue_invoice: Receipt,
+  upcoming_event: CalendarDays,
+  task_due: CheckSquare,
+};
+
 const nav = [
   { to: "/app", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { to: "/app/reports", label: "Reports", icon: BarChart3 },
