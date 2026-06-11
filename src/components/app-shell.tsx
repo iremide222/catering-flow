@@ -1,8 +1,12 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
-import { type ReactNode } from "react";
+import { type ReactNode, useState, useEffect, useRef } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { getNotifications, syncNotifications } from "@/lib/notifications.functions";
+import { formatDate } from "@/lib/format";
 import {
   LayoutDashboard,
   Users,
@@ -19,8 +23,17 @@ import {
   CheckSquare,
   Receipt,
   BarChart3,
+  Bell,
+  Package as PackageIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+const BELL_ICON: Record<string, React.ElementType> = {
+  low_stock: Package,
+  overdue_invoice: Receipt,
+  upcoming_event: CalendarDays,
+  task_due: CheckSquare,
+};
 
 const nav = [
   { to: "/app", label: "Dashboard", icon: LayoutDashboard, exact: true },
@@ -38,7 +51,99 @@ const nav = [
   { to: "/app/settings", label: "Settings", icon: Settings },
 ];
 
+function NotificationBell() {
+  const { currentOrgId } = useAuth();
+  const qc = useQueryClient();
+  const navigate = useNavigate();
+  const fetchList = useServerFn(getNotifications);
+  const doSync = useServerFn(syncNotifications);
+  const [open, setOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
+  const { data: notifData } = useQuery({
+    queryKey: ["notifications"],
+    queryFn: () => fetchList(),
+    enabled: !!currentOrgId,
+    refetchInterval: 30000,
+  });
+
+  useEffect(() => {
+    if (!currentOrgId) return;
+    doSync({ data: { organizationId: currentOrgId } }).catch(() => {});
+  }, [currentOrgId, doSync]);
+
+  const notifications = notifData?.notifications ?? [];
+  const unread = notifications.filter((n: any) => !n.read);
+  const recent = unread.slice(0, 5);
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
+
+  return (
+    <div className="relative" ref={dropdownRef}>
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className="relative rounded-md p-2 text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+      >
+        <Bell className="h-5 w-5" />
+        {unread.length > 0 && (
+          <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-medium text-destructive-foreground">
+            {unread.length > 9 ? "9+" : unread.length}
+          </span>
+        )}
+      </button>
+
+      {open && (
+        <div className="absolute right-0 top-full z-50 mt-2 w-80 rounded-md border bg-card p-2 shadow-lg">
+          <div className="mb-2 flex items-center justify-between px-2 pt-1">
+            <span className="text-sm font-medium">Notifications</span>
+            <button
+              onClick={() => { setOpen(false); navigate({ to: "/app/notifications" }); }}
+              className="text-xs text-primary hover:underline"
+            >
+              View all
+            </button>
+          </div>
+          {recent.length === 0 ? (
+            <div className="px-2 py-4 text-center text-sm text-muted-foreground">No new alerts.</div>
+          ) : (
+            <div className="max-h-72 overflow-y-auto">
+              {recent.map((n: any) => {
+                const NIcon = BELL_ICON[n.type] ?? Bell;
+                return (
+                  <button
+                    key={n.id}
+                    onClick={() => {
+                      setOpen(false);
+                      if (n.link) navigate({ to: n.link });
+                    }}
+                    className="flex w-full items-start gap-3 rounded-md px-2 py-2 text-left transition-colors hover:bg-accent/50"
+                  >
+                    <div className="mt-0.5">
+                      <NIcon className="h-4 w-4 text-muted-foreground" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="text-sm font-medium leading-snug">{n.title}</div>
+                      <div className="text-xs text-muted-foreground line-clamp-2">{n.message}</div>
+                      <div className="mt-1 text-[10px] text-muted-foreground">{formatDate(n.created_at)}</div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export function AppShell({ children }: { children: ReactNode }) {
   const { user, organizations, currentOrgId, setCurrentOrg, signOut } = useAuth();
@@ -49,9 +154,12 @@ export function AppShell({ children }: { children: ReactNode }) {
   return (
     <div className="flex min-h-screen bg-muted/20">
       <aside className="flex w-60 flex-col border-r bg-card">
-        <div className="border-b px-5 py-4">
-          <div className="text-base font-semibold tracking-tight">CaterFlow</div>
-          <div className="mt-1 text-xs text-muted-foreground">{currentOrg?.name ?? "No workspace"}</div>
+        <div className="flex items-center justify-between border-b px-5 py-4">
+          <div>
+            <div className="text-base font-semibold tracking-tight">CaterFlow</div>
+            <div className="mt-1 text-xs text-muted-foreground">{currentOrg?.name ?? "No workspace"}</div>
+          </div>
+          <NotificationBell />
         </div>
         <nav className="flex-1 space-y-1 p-3">
           {nav.map((item) => {

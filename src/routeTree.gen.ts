@@ -23,6 +23,7 @@ import { Route as AuthenticatedAppSettingsIndexRouteImport } from './routes/_aut
 import { Route as AuthenticatedAppReportsIndexRouteImport } from './routes/_authenticated.app.reports.index'
 import { Route as AuthenticatedAppQuotationsIndexRouteImport } from './routes/_authenticated.app.quotations.index'
 import { Route as AuthenticatedAppPurchaseOrdersIndexRouteImport } from './routes/_authenticated.app.purchase-orders.index'
+import { Route as AuthenticatedAppNotificationsIndexRouteImport } from './routes/_authenticated.app.notifications.index'
 import { Route as AuthenticatedAppInvoicesIndexRouteImport } from './routes/_authenticated.app.invoices.index'
 import { Route as AuthenticatedAppInventoryIndexRouteImport } from './routes/_authenticated.app.inventory.index'
 import { Route as AuthenticatedAppFollowUpsIndexRouteImport } from './routes/_authenticated.app.follow-ups.index'
@@ -114,6 +115,12 @@ const AuthenticatedAppPurchaseOrdersIndexRoute =
   AuthenticatedAppPurchaseOrdersIndexRouteImport.update({
     id: '/purchase-orders/',
     path: '/purchase-orders/',
+    getParentRoute: () => AuthenticatedAppRoute,
+  } as any)
+const AuthenticatedAppNotificationsIndexRoute =
+  AuthenticatedAppNotificationsIndexRouteImport.update({
+    id: '/notifications/',
+    path: '/notifications/',
     getParentRoute: () => AuthenticatedAppRoute,
   } as any)
 const AuthenticatedAppInvoicesIndexRoute =
@@ -229,6 +236,7 @@ export interface FileRoutesByFullPath {
   '/app/follow-ups/': typeof AuthenticatedAppFollowUpsIndexRoute
   '/app/inventory/': typeof AuthenticatedAppInventoryIndexRoute
   '/app/invoices/': typeof AuthenticatedAppInvoicesIndexRoute
+  '/app/notifications/': typeof AuthenticatedAppNotificationsIndexRoute
   '/app/purchase-orders/': typeof AuthenticatedAppPurchaseOrdersIndexRoute
   '/app/quotations/': typeof AuthenticatedAppQuotationsIndexRoute
   '/app/reports/': typeof AuthenticatedAppReportsIndexRoute
@@ -258,6 +266,7 @@ export interface FileRoutesByTo {
   '/app/follow-ups': typeof AuthenticatedAppFollowUpsIndexRoute
   '/app/inventory': typeof AuthenticatedAppInventoryIndexRoute
   '/app/invoices': typeof AuthenticatedAppInvoicesIndexRoute
+  '/app/notifications': typeof AuthenticatedAppNotificationsIndexRoute
   '/app/purchase-orders': typeof AuthenticatedAppPurchaseOrdersIndexRoute
   '/app/quotations': typeof AuthenticatedAppQuotationsIndexRoute
   '/app/reports': typeof AuthenticatedAppReportsIndexRoute
@@ -290,6 +299,7 @@ export interface FileRoutesById {
   '/_authenticated/app/follow-ups/': typeof AuthenticatedAppFollowUpsIndexRoute
   '/_authenticated/app/inventory/': typeof AuthenticatedAppInventoryIndexRoute
   '/_authenticated/app/invoices/': typeof AuthenticatedAppInvoicesIndexRoute
+  '/_authenticated/app/notifications/': typeof AuthenticatedAppNotificationsIndexRoute
   '/_authenticated/app/purchase-orders/': typeof AuthenticatedAppPurchaseOrdersIndexRoute
   '/_authenticated/app/quotations/': typeof AuthenticatedAppQuotationsIndexRoute
   '/_authenticated/app/reports/': typeof AuthenticatedAppReportsIndexRoute
@@ -322,6 +332,7 @@ export interface FileRouteTypes {
     | '/app/follow-ups/'
     | '/app/inventory/'
     | '/app/invoices/'
+    | '/app/notifications/'
     | '/app/purchase-orders/'
     | '/app/quotations/'
     | '/app/reports/'
@@ -351,6 +362,7 @@ export interface FileRouteTypes {
     | '/app/follow-ups'
     | '/app/inventory'
     | '/app/invoices'
+    | '/app/notifications'
     | '/app/purchase-orders'
     | '/app/quotations'
     | '/app/reports'
@@ -382,6 +394,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/follow-ups/'
     | '/_authenticated/app/inventory/'
     | '/_authenticated/app/invoices/'
+    | '/_authenticated/app/notifications/'
     | '/_authenticated/app/purchase-orders/'
     | '/_authenticated/app/quotations/'
     | '/_authenticated/app/reports/'
@@ -496,6 +509,13 @@ declare module '@tanstack/react-router' {
       path: '/purchase-orders'
       fullPath: '/app/purchase-orders/'
       preLoaderRoute: typeof AuthenticatedAppPurchaseOrdersIndexRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/app/notifications/': {
+      id: '/_authenticated/app/notifications/'
+      path: '/notifications'
+      fullPath: '/app/notifications/'
+      preLoaderRoute: typeof AuthenticatedAppNotificationsIndexRouteImport
       parentRoute: typeof AuthenticatedAppRoute
     }
     '/_authenticated/app/invoices/': {
@@ -624,6 +644,7 @@ interface AuthenticatedAppRouteChildren {
   AuthenticatedAppFollowUpsIndexRoute: typeof AuthenticatedAppFollowUpsIndexRoute
   AuthenticatedAppInventoryIndexRoute: typeof AuthenticatedAppInventoryIndexRoute
   AuthenticatedAppInvoicesIndexRoute: typeof AuthenticatedAppInvoicesIndexRoute
+  AuthenticatedAppNotificationsIndexRoute: typeof AuthenticatedAppNotificationsIndexRoute
   AuthenticatedAppPurchaseOrdersIndexRoute: typeof AuthenticatedAppPurchaseOrdersIndexRoute
   AuthenticatedAppQuotationsIndexRoute: typeof AuthenticatedAppQuotationsIndexRoute
   AuthenticatedAppReportsIndexRoute: typeof AuthenticatedAppReportsIndexRoute
@@ -652,6 +673,8 @@ const AuthenticatedAppRouteChildren: AuthenticatedAppRouteChildren = {
   AuthenticatedAppFollowUpsIndexRoute: AuthenticatedAppFollowUpsIndexRoute,
   AuthenticatedAppInventoryIndexRoute: AuthenticatedAppInventoryIndexRoute,
   AuthenticatedAppInvoicesIndexRoute: AuthenticatedAppInvoicesIndexRoute,
+  AuthenticatedAppNotificationsIndexRoute:
+    AuthenticatedAppNotificationsIndexRoute,
   AuthenticatedAppPurchaseOrdersIndexRoute:
     AuthenticatedAppPurchaseOrdersIndexRoute,
   AuthenticatedAppQuotationsIndexRoute: AuthenticatedAppQuotationsIndexRoute,
@@ -685,3 +708,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
