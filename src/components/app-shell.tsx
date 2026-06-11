@@ -115,25 +115,28 @@ function NotificationBell() {
             <div className="px-2 py-4 text-center text-sm text-muted-foreground">No new alerts.</div>
           ) : (
             <div className="max-h-72 overflow-y-auto">
-              {recent.map((n: any) => (
-                <button
-                  key={n.id}
-                  onClick={() => {
-                    setOpen(false);
-                    if (n.link) navigate({ to: n.link });
-                  }}
-                  className="flex w-full items-start gap-3 rounded-md px-2 py-2 text-left transition-colors hover:bg-accent/50"
-                >
-                  <div className="mt-0.5">
-                    <PackageIcon className="h-4 w-4 text-muted-foreground" />
-                  </div>
-                  <div className="flex-1">
-                    <div className="text-sm font-medium leading-snug">{n.title}</div>
-                    <div className="text-xs text-muted-foreground line-clamp-2">{n.message}</div>
-                    <div className="mt-1 text-[10px] text-muted-foreground">{formatDate(n.created_at)}</div>
-                  </div>
-                </button>
-              ))}
+              {recent.map((n: any) => {
+                const NIcon = BELL_ICON[n.type] ?? Bell;
+                return (
+                  <button
+                    key={n.id}
+                    onClick={() => {
+                      setOpen(false);
+                      if (n.link) navigate({ to: n.link });
+                    }}
+                    className="flex w-full items-start gap-3 rounded-md px-2 py-2 text-left transition-colors hover:bg-accent/50"
+                  >
+                    <div className="mt-0.5">
+                      <NIcon className="h-4 w-4 text-muted-foreground" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="text-sm font-medium leading-snug">{n.title}</div>
+                      <div className="text-xs text-muted-foreground line-clamp-2">{n.message}</div>
+                      <div className="mt-1 text-[10px] text-muted-foreground">{formatDate(n.created_at)}</div>
+                    </div>
+                  </button>
+                );
+              })}
             </div>
           )}
         </div>
