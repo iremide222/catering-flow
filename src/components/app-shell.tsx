@@ -1,8 +1,12 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
-import { type ReactNode } from "react";
+import { type ReactNode, useState, useEffect, useRef } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { getNotifications, syncNotifications } from "@/lib/notifications.functions";
+import { formatDate } from "@/lib/format";
 import {
   LayoutDashboard,
   Users,
@@ -19,6 +23,8 @@ import {
   CheckSquare,
   Receipt,
   BarChart3,
+  Bell,
+  Package as PackageIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
