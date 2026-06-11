@@ -68,10 +68,10 @@ export const syncNotifications = createServerFn({ method: "POST" })
       .select("id, name, unit, reorder_level, stock_levels(quantity)")
       .eq("organization_id", orgId)
       .eq("is_active", true);
-    (items ?? []).forEach((it: any) => {
+    for (const it of items ?? []) {
       const onHand = (it.stock_levels ?? []).reduce((s: number, sl: any) => s + Number(sl.quantity ?? 0), 0);
       if (Number(it.reorder_level) > 0 && onHand <= Number(it.reorder_level)) {
-        if (!exists("low_stock", it.id)) {
+        if (!(await exists("low_stock", it.id))) {
           inserts.push({
             organization_id: orgId,
             user_id: userId,
@@ -84,7 +84,7 @@ export const syncNotifications = createServerFn({ method: "POST" })
           });
         }
       }
-    });
+    }
 
     // 2. Overdue invoices
     const { data: invoices } = await supabase
@@ -94,10 +94,10 @@ export const syncNotifications = createServerFn({ method: "POST" })
       .lt("due_date", today)
       .neq("status", "void")
       .neq("status", "paid");
-    (invoices ?? []).forEach((inv: any) => {
+    for (const inv of invoices ?? []) {
       const bal = Number(inv.total) - Number(inv.amount_paid);
       if (bal > 0) {
-        if (!exists("overdue_invoice", inv.id)) {
+        if (!(await exists("overdue_invoice", inv.id))) {
           inserts.push({
             organization_id: orgId,
             user_id: userId,
@@ -110,7 +110,7 @@ export const syncNotifications = createServerFn({ method: "POST" })
           });
         }
       }
-    });
+    }
 
     // 3. Upcoming events (within 7 days)
     const nextWeek = new Date();
@@ -123,8 +123,8 @@ export const syncNotifications = createServerFn({ method: "POST" })
       .lte("event_date", nextWeek.toISOString().slice(0, 10))
       .neq("status", "closed")
       .neq("status", "cancelled");
-    (events ?? []).forEach((ev: any) => {
-      if (!exists("upcoming_event", ev.id)) {
+    for (const ev of events ?? []) {
+      if (!(await exists("upcoming_event", ev.id))) {
         inserts.push({
           organization_id: orgId,
           user_id: userId,
@@ -136,7 +136,7 @@ export const syncNotifications = createServerFn({ method: "POST" })
           entity_id: ev.id,
         });
       }
-    });
+    }
 
     // 4. Overdue tasks
     const { data: tasks } = await supabase
@@ -145,8 +145,8 @@ export const syncNotifications = createServerFn({ method: "POST" })
       .eq("organization_id", orgId)
       .lt("due_date", today)
       .neq("status", "done");
-    (tasks ?? []).forEach((t: any) => {
-      if (!exists("task_due", t.id)) {
+    for (const t of tasks ?? []) {
+      if (!(await exists("task_due", t.id))) {
         inserts.push({
           organization_id: orgId,
           user_id: userId,
@@ -158,7 +158,7 @@ export const syncNotifications = createServerFn({ method: "POST" })
           entity_id: t.id,
         });
       }
-    });
+    }
 
     // Deduplicate inserts by entity_id+type before sending
     const seen = new Set<string>();
