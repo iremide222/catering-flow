@@ -24,6 +24,7 @@ import {
   Receipt,
   BarChart3,
   Bell,
+  ScrollText,
   Package as PackageIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -48,6 +49,7 @@ const nav = [
   { to: "/app/inventory", label: "Inventory", icon: Package },
   { to: "/app/suppliers", label: "Suppliers", icon: Truck },
   { to: "/app/purchase-orders", label: "Purchase orders", icon: ClipboardList },
+  { to: "/app/audit-log", label: "Audit log", icon: ScrollText },
   { to: "/app/settings", label: "Settings", icon: Settings },
 ];
 

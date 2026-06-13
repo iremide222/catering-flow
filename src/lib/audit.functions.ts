@@ -36,7 +36,7 @@ export const writeAuditEntry = createServerFn({ method: "POST" })
       action: data.action,
       entity: data.entity ?? null,
       entity_id: data.entityId ?? null,
-      payload: data.payload ?? null,
+      payload: (data.payload ?? null) as any,
     });
     if (error) throw new Error(error.message);
     return { ok: true };
