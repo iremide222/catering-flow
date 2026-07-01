@@ -29,6 +29,7 @@ import { Route as AuthenticatedAppInventoryIndexRouteImport } from './routes/_au
 import { Route as AuthenticatedAppFollowUpsIndexRouteImport } from './routes/_authenticated.app.follow-ups.index'
 import { Route as AuthenticatedAppEventsIndexRouteImport } from './routes/_authenticated.app.events.index'
 import { Route as AuthenticatedAppCustomersIndexRouteImport } from './routes/_authenticated.app.customers.index'
+import { Route as AuthenticatedAppCalendarIndexRouteImport } from './routes/_authenticated.app.calendar.index'
 import { Route as AuthenticatedAppAuditLogIndexRouteImport } from './routes/_authenticated.app.audit-log.index'
 import { Route as AuthenticatedAppPurchaseOrdersNewRouteImport } from './routes/_authenticated.app.purchase-orders.new'
 import { Route as AuthenticatedAppPurchaseOrdersIdRouteImport } from './routes/_authenticated.app.purchase-orders.$id'
@@ -154,6 +155,12 @@ const AuthenticatedAppCustomersIndexRoute =
     path: '/customers/',
     getParentRoute: () => AuthenticatedAppRoute,
   } as any)
+const AuthenticatedAppCalendarIndexRoute =
+  AuthenticatedAppCalendarIndexRouteImport.update({
+    id: '/calendar/',
+    path: '/calendar/',
+    getParentRoute: () => AuthenticatedAppRoute,
+  } as any)
 const AuthenticatedAppAuditLogIndexRoute =
   AuthenticatedAppAuditLogIndexRouteImport.update({
     id: '/audit-log/',
@@ -239,6 +246,7 @@ export interface FileRoutesByFullPath {
   '/app/purchase-orders/$id': typeof AuthenticatedAppPurchaseOrdersIdRoute
   '/app/purchase-orders/new': typeof AuthenticatedAppPurchaseOrdersNewRoute
   '/app/audit-log/': typeof AuthenticatedAppAuditLogIndexRoute
+  '/app/calendar/': typeof AuthenticatedAppCalendarIndexRoute
   '/app/customers/': typeof AuthenticatedAppCustomersIndexRoute
   '/app/events/': typeof AuthenticatedAppEventsIndexRoute
   '/app/follow-ups/': typeof AuthenticatedAppFollowUpsIndexRoute
@@ -270,6 +278,7 @@ export interface FileRoutesByTo {
   '/app/purchase-orders/$id': typeof AuthenticatedAppPurchaseOrdersIdRoute
   '/app/purchase-orders/new': typeof AuthenticatedAppPurchaseOrdersNewRoute
   '/app/audit-log': typeof AuthenticatedAppAuditLogIndexRoute
+  '/app/calendar': typeof AuthenticatedAppCalendarIndexRoute
   '/app/customers': typeof AuthenticatedAppCustomersIndexRoute
   '/app/events': typeof AuthenticatedAppEventsIndexRoute
   '/app/follow-ups': typeof AuthenticatedAppFollowUpsIndexRoute
@@ -304,6 +313,7 @@ export interface FileRoutesById {
   '/_authenticated/app/purchase-orders/$id': typeof AuthenticatedAppPurchaseOrdersIdRoute
   '/_authenticated/app/purchase-orders/new': typeof AuthenticatedAppPurchaseOrdersNewRoute
   '/_authenticated/app/audit-log/': typeof AuthenticatedAppAuditLogIndexRoute
+  '/_authenticated/app/calendar/': typeof AuthenticatedAppCalendarIndexRoute
   '/_authenticated/app/customers/': typeof AuthenticatedAppCustomersIndexRoute
   '/_authenticated/app/events/': typeof AuthenticatedAppEventsIndexRoute
   '/_authenticated/app/follow-ups/': typeof AuthenticatedAppFollowUpsIndexRoute
@@ -338,6 +348,7 @@ export interface FileRouteTypes {
     | '/app/purchase-orders/$id'
     | '/app/purchase-orders/new'
     | '/app/audit-log/'
+    | '/app/calendar/'
     | '/app/customers/'
     | '/app/events/'
     | '/app/follow-ups/'
@@ -369,6 +380,7 @@ export interface FileRouteTypes {
     | '/app/purchase-orders/$id'
     | '/app/purchase-orders/new'
     | '/app/audit-log'
+    | '/app/calendar'
     | '/app/customers'
     | '/app/events'
     | '/app/follow-ups'
@@ -402,6 +414,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/purchase-orders/$id'
     | '/_authenticated/app/purchase-orders/new'
     | '/_authenticated/app/audit-log/'
+    | '/_authenticated/app/calendar/'
     | '/_authenticated/app/customers/'
     | '/_authenticated/app/events/'
     | '/_authenticated/app/follow-ups/'
@@ -566,6 +579,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppCustomersIndexRouteImport
       parentRoute: typeof AuthenticatedAppRoute
     }
+    '/_authenticated/app/calendar/': {
+      id: '/_authenticated/app/calendar/'
+      path: '/calendar'
+      fullPath: '/app/calendar/'
+      preLoaderRoute: typeof AuthenticatedAppCalendarIndexRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
     '/_authenticated/app/audit-log/': {
       id: '/_authenticated/app/audit-log/'
       path: '/audit-log'
@@ -660,6 +680,7 @@ interface AuthenticatedAppRouteChildren {
   AuthenticatedAppPurchaseOrdersIdRoute: typeof AuthenticatedAppPurchaseOrdersIdRoute
   AuthenticatedAppPurchaseOrdersNewRoute: typeof AuthenticatedAppPurchaseOrdersNewRoute
   AuthenticatedAppAuditLogIndexRoute: typeof AuthenticatedAppAuditLogIndexRoute
+  AuthenticatedAppCalendarIndexRoute: typeof AuthenticatedAppCalendarIndexRoute
   AuthenticatedAppCustomersIndexRoute: typeof AuthenticatedAppCustomersIndexRoute
   AuthenticatedAppEventsIndexRoute: typeof AuthenticatedAppEventsIndexRoute
   AuthenticatedAppFollowUpsIndexRoute: typeof AuthenticatedAppFollowUpsIndexRoute
@@ -690,6 +711,7 @@ const AuthenticatedAppRouteChildren: AuthenticatedAppRouteChildren = {
   AuthenticatedAppPurchaseOrdersNewRoute:
     AuthenticatedAppPurchaseOrdersNewRoute,
   AuthenticatedAppAuditLogIndexRoute: AuthenticatedAppAuditLogIndexRoute,
+  AuthenticatedAppCalendarIndexRoute: AuthenticatedAppCalendarIndexRoute,
   AuthenticatedAppCustomersIndexRoute: AuthenticatedAppCustomersIndexRoute,
   AuthenticatedAppEventsIndexRoute: AuthenticatedAppEventsIndexRoute,
   AuthenticatedAppFollowUpsIndexRoute: AuthenticatedAppFollowUpsIndexRoute,
