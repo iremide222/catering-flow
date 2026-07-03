@@ -6,8 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Plus } from "lucide-react";
+import { Plus, Download } from "lucide-react";
 import { formatCurrency, formatDate } from "@/lib/format";
+import { exportCsv } from "@/lib/export-csv";
 
 export const Route = createFileRoute("/_authenticated/app/invoices/")({
   head: () => ({ meta: [{ title: "Invoices — CaterFlow" }] }),
