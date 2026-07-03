@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { formatCurrency, formatDate } from "@/lib/format";
-import { Plus } from "lucide-react";
+import { Plus, Download } from "lucide-react";
+import { exportCsv } from "@/lib/export-csv";
 
 export const Route = createFileRoute("/_authenticated/app/events/")({
   head: () => ({ meta: [{ title: "Events — CaterFlow" }] }),
