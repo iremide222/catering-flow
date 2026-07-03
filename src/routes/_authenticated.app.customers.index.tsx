@@ -7,7 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card, CardContent } from "@/components/ui/card";
 import { useState } from "react";
-import { Plus } from "lucide-react";
+import { Plus, Download } from "lucide-react";
+import { exportCsv } from "@/lib/export-csv";
+import { formatDate } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/app/customers/")({
   head: () => ({ meta: [{ title: "Customers — CaterFlow" }] }),
@@ -40,7 +42,28 @@ function CustomersList() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold tracking-tight">Customers</h1>
-        <Link to="/app/customers/new"><Button><Plus className="mr-2 h-4 w-4" /> New customer</Button></Link>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            onClick={() =>
+              exportCsv(
+                "customers",
+                [
+                  { key: "name", label: "Name" },
+                  { key: "email", label: "Email" },
+                  { key: "phone", label: "Phone" },
+                  { key: "tags", label: "Tags", get: (r: any) => (r.tags ?? []).join("; ") },
+                  { key: "created_at", label: "Created", get: (r: any) => formatDate(r.created_at) },
+                ],
+                filtered,
+              )
+            }
+            disabled={filtered.length === 0}
+          >
+            <Download className="mr-2 h-4 w-4" /> Export CSV
+          </Button>
+          <Link to="/app/customers/new"><Button><Plus className="mr-2 h-4 w-4" /> New customer</Button></Link>
+        </div>
       </div>
 
       <Input placeholder="Search by name, email or phone…" value={q} onChange={(e) => setQ(e.target.value)} className="max-w-sm" />

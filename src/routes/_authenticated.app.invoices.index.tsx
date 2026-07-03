@@ -6,8 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Plus } from "lucide-react";
+import { Plus, Download } from "lucide-react";
 import { formatCurrency, formatDate } from "@/lib/format";
+import { exportCsv } from "@/lib/export-csv";
 
 export const Route = createFileRoute("/_authenticated/app/invoices/")({
   head: () => ({ meta: [{ title: "Invoices — CaterFlow" }] }),
@@ -54,7 +55,31 @@ function InvoicesList() {
             Outstanding: <span className="font-medium text-foreground">{formatCurrency(outstanding, currency)}</span>
           </p>
         </div>
-        <Link to="/app/invoices/new"><Button><Plus className="mr-2 h-4 w-4" /> New invoice</Button></Link>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            onClick={() =>
+              exportCsv(
+                "invoices",
+                [
+                  { key: "invoice_number", label: "Number" },
+                  { key: "customer", label: "Customer", get: (r: any) => r.customers?.name ?? "" },
+                  { key: "issue_date", label: "Issued", get: (r: any) => formatDate(r.issue_date) },
+                  { key: "due_date", label: "Due", get: (r: any) => formatDate(r.due_date) },
+                  { key: "status", label: "Status" },
+                  { key: "total", label: "Total", get: (r: any) => Number(r.total).toFixed(2) },
+                  { key: "amount_paid", label: "Paid", get: (r: any) => Number(r.amount_paid).toFixed(2) },
+                  { key: "balance", label: "Balance", get: (r: any) => (Number(r.total) - Number(r.amount_paid)).toFixed(2) },
+                ],
+                invoices,
+              )
+            }
+            disabled={invoices.length === 0}
+          >
+            <Download className="mr-2 h-4 w-4" /> Export CSV
+          </Button>
+          <Link to="/app/invoices/new"><Button><Plus className="mr-2 h-4 w-4" /> New invoice</Button></Link>
+        </div>
       </div>
 
       <Card>

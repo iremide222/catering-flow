@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { formatCurrency, formatDate } from "@/lib/format";
-import { Plus } from "lucide-react";
+import { Plus, Download } from "lucide-react";
+import { exportCsv } from "@/lib/export-csv";
 
 export const Route = createFileRoute("/_authenticated/app/events/")({
   head: () => ({ meta: [{ title: "Events — CaterFlow" }] }),
@@ -47,7 +48,30 @@ function EventsList() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold tracking-tight">Events</h1>
-        <Link to="/app/events/new"><Button><Plus className="mr-2 h-4 w-4" /> New event</Button></Link>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            onClick={() =>
+              exportCsv(
+                "events",
+                [
+                  { key: "title", label: "Title" },
+                  { key: "customer", label: "Customer", get: (r: any) => r.customers?.name ?? "" },
+                  { key: "event_date", label: "Date", get: (r: any) => formatDate(r.event_date) },
+                  { key: "venue", label: "Venue" },
+                  { key: "guest_count", label: "Guests" },
+                  { key: "status", label: "Status" },
+                  { key: "total_amount", label: "Total", get: (r: any) => Number(r.total_amount ?? 0).toFixed(2) },
+                ],
+                events,
+              )
+            }
+            disabled={events.length === 0}
+          >
+            <Download className="mr-2 h-4 w-4" /> Export CSV
+          </Button>
+          <Link to="/app/events/new"><Button><Plus className="mr-2 h-4 w-4" /> New event</Button></Link>
+        </div>
       </div>
       <Card>
         <CardContent className="p-0">
