@@ -7,7 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card, CardContent } from "@/components/ui/card";
 import { useState } from "react";
-import { Plus } from "lucide-react";
+import { Plus, Download } from "lucide-react";
+import { exportCsv } from "@/lib/export-csv";
+import { formatDate } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/app/customers/")({
   head: () => ({ meta: [{ title: "Customers — CaterFlow" }] }),
