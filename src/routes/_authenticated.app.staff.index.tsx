@@ -133,7 +133,9 @@ function StaffList() {
             <TableBody>
               {staff.length === 0 ? (
                 <TableRow><TableCell colSpan={6} className="py-10 text-center text-sm text-muted-foreground">No staff yet.</TableCell></TableRow>
-              ) : staff.map((s: any) => (
+              ) : staff.map((s: any) => {
+                const up = upcomingByStaff.get(s.id) ?? [];
+                return (
                 <TableRow key={s.id}>
                   <TableCell className="font-medium">{s.name}</TableCell>
                   <TableCell className="text-muted-foreground">{s.role_title ?? "—"}</TableCell>
@@ -149,7 +151,8 @@ function StaffList() {
                   </TableCell>
                   <TableCell><Button variant="ghost" size="icon" onClick={() => remove(s.id)}><Trash2 className="h-4 w-4" /></Button></TableCell>
                 </TableRow>
-              ))}
+                );
+              })}
             </TableBody>
           </Table>
         </CardContent>
