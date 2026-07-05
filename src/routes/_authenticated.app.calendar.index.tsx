@@ -45,7 +45,7 @@ function CalendarPage() {
     queryFn: async () => {
       const { data } = await supabase
         .from("events")
-        .select("id,name,event_date,status,guest_count,customers(name)")
+        .select("id,title,event_date,status,guest_count,customers(name)")
         .eq("organization_id", currentOrgId!)
         .gte("event_date", ymd(rangeStart))
         .lt("event_date", ymd(rangeEnd))
@@ -140,9 +140,9 @@ function CalendarPage() {
                           "block truncate rounded px-1.5 py-0.5 text-[11px] leading-tight hover:opacity-80",
                           STATUS_COLOR[e.status] ?? "bg-muted",
                         )}
-                        title={`${e.name} · ${e.customers?.name ?? ""}`}
+                        title={`${e.title} · ${e.customers?.name ?? ""}`}
                       >
-                        {e.name}
+                        {e.title}
                       </Link>
                     ))}
                     {dayEvents.length > 3 && (
