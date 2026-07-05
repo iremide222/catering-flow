@@ -39,6 +39,32 @@ function StaffList() {
     },
   });
 
+  const today = new Date().toISOString().slice(0, 10);
+  const { data: assignments = [] } = useQuery({
+    queryKey: ["staff-upcoming", currentOrgId],
+    enabled: !!currentOrgId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("event_staff_assignments")
+        .select("id, role, staff_member_id, events!inner(id, title, event_date, start_time, venue, organization_id)")
+        .eq("events.organization_id", currentOrgId!)
+        .gte("events.event_date", today)
+        .order("event_date", { referencedTable: "events", ascending: true })
+        .limit(50);
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const upcomingByStaff = useMemo(() => {
+    const m = new Map<string, any[]>();
+    for (const a of assignments as any[]) {
+      if (!m.has(a.staff_member_id)) m.set(a.staff_member_id, []);
+      m.get(a.staff_member_id)!.push(a);
+    }
+    return m;
+  }, [assignments]);
+
   const create = async () => {
     if (!currentOrgId || !form.name) return;
     const { error } = await supabase.from("staff_members").insert({
