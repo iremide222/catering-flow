@@ -157,6 +157,55 @@ function StaffList() {
           </Table>
         </CardContent>
       </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-base">
+            <CalendarDays className="h-4 w-4" /> Upcoming schedule
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {assignments.length === 0 ? (
+            <p className="py-6 text-center text-sm text-muted-foreground">No upcoming assignments.</p>
+          ) : (
+            <div className="space-y-4">
+              {staff
+                .filter((s: any) => (upcomingByStaff.get(s.id) ?? []).length > 0)
+                .map((s: any) => {
+                  const up = upcomingByStaff.get(s.id) ?? [];
+                  return (
+                    <div key={s.id} className="space-y-2">
+                      <div className="text-sm font-medium">
+                        {s.name}
+                        <span className="ml-2 text-xs text-muted-foreground">{up.length} upcoming</span>
+                      </div>
+                      <div className="grid gap-2 md:grid-cols-2">
+                        {up.slice(0, 6).map((a: any) => (
+                          <Link
+                            key={a.id}
+                            to="/app/events/$id"
+                            params={{ id: a.events.id }}
+                            className="flex items-center justify-between gap-3 rounded-md border bg-card px-3 py-2 text-sm hover:bg-accent/40"
+                          >
+                            <div className="min-w-0">
+                              <div className="truncate font-medium">{a.events.title}</div>
+                              <div className="truncate text-xs text-muted-foreground">
+                                {formatDate(a.events.event_date)}
+                                {a.events.start_time ? ` · ${a.events.start_time.slice(0, 5)}` : ""}
+                                {a.events.venue ? ` · ${a.events.venue}` : ""}
+                              </div>
+                            </div>
+                            {a.role && <Badge variant="outline" className="shrink-0">{a.role}</Badge>}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }
