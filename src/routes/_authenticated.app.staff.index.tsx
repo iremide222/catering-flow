@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useAuth } from "@/lib/auth-context";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -7,12 +7,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Plus, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { Plus, Trash2, CalendarDays } from "lucide-react";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
+import { formatDate } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/app/staff/")({
   head: () => ({ meta: [{ title: "Staff — CaterFlow" }] }),
@@ -37,6 +38,32 @@ function StaffList() {
       return data ?? [];
     },
   });
+
+  const today = new Date().toISOString().slice(0, 10);
+  const { data: assignments = [] } = useQuery({
+    queryKey: ["staff-upcoming", currentOrgId],
+    enabled: !!currentOrgId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("event_staff_assignments")
+        .select("id, role, staff_member_id, events!inner(id, title, event_date, start_time, venue, organization_id)")
+        .eq("events.organization_id", currentOrgId!)
+        .gte("events.event_date", today)
+        .order("event_date", { referencedTable: "events", ascending: true })
+        .limit(50);
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const upcomingByStaff = useMemo(() => {
+    const m = new Map<string, any[]>();
+    for (const a of assignments as any[]) {
+      if (!m.has(a.staff_member_id)) m.set(a.staff_member_id, []);
+      m.get(a.staff_member_id)!.push(a);
+    }
+    return m;
+  }, [assignments]);
 
   const create = async () => {
     if (!currentOrgId || !form.name) return;
@@ -106,7 +133,9 @@ function StaffList() {
             <TableBody>
               {staff.length === 0 ? (
                 <TableRow><TableCell colSpan={6} className="py-10 text-center text-sm text-muted-foreground">No staff yet.</TableCell></TableRow>
-              ) : staff.map((s: any) => (
+              ) : staff.map((s: any) => {
+                const up = upcomingByStaff.get(s.id) ?? [];
+                return (
                 <TableRow key={s.id}>
                   <TableCell className="font-medium">{s.name}</TableCell>
                   <TableCell className="text-muted-foreground">{s.role_title ?? "—"}</TableCell>
@@ -122,9 +151,59 @@ function StaffList() {
                   </TableCell>
                   <TableCell><Button variant="ghost" size="icon" onClick={() => remove(s.id)}><Trash2 className="h-4 w-4" /></Button></TableCell>
                 </TableRow>
-              ))}
+                );
+              })}
             </TableBody>
           </Table>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-base">
+            <CalendarDays className="h-4 w-4" /> Upcoming schedule
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {assignments.length === 0 ? (
+            <p className="py-6 text-center text-sm text-muted-foreground">No upcoming assignments.</p>
+          ) : (
+            <div className="space-y-4">
+              {staff
+                .filter((s: any) => (upcomingByStaff.get(s.id) ?? []).length > 0)
+                .map((s: any) => {
+                  const up = upcomingByStaff.get(s.id) ?? [];
+                  return (
+                    <div key={s.id} className="space-y-2">
+                      <div className="text-sm font-medium">
+                        {s.name}
+                        <span className="ml-2 text-xs text-muted-foreground">{up.length} upcoming</span>
+                      </div>
+                      <div className="grid gap-2 md:grid-cols-2">
+                        {up.slice(0, 6).map((a: any) => (
+                          <Link
+                            key={a.id}
+                            to="/app/events/$id"
+                            params={{ id: a.events.id }}
+                            className="flex items-center justify-between gap-3 rounded-md border bg-card px-3 py-2 text-sm hover:bg-accent/40"
+                          >
+                            <div className="min-w-0">
+                              <div className="truncate font-medium">{a.events.title}</div>
+                              <div className="truncate text-xs text-muted-foreground">
+                                {formatDate(a.events.event_date)}
+                                {a.events.start_time ? ` · ${a.events.start_time.slice(0, 5)}` : ""}
+                                {a.events.venue ? ` · ${a.events.venue}` : ""}
+                              </div>
+                            </div>
+                            {a.role && <Badge variant="outline" className="shrink-0">{a.role}</Badge>}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
