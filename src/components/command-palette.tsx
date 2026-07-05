@@ -80,7 +80,7 @@ export function CommandPalette() {
       const like = `%${term}%`;
       const [customers, events, invoices, items] = await Promise.all([
         supabase.from("customers").select("id,name,email").eq("organization_id", currentOrgId!).ilike("name", like).limit(6),
-        supabase.from("events").select("id,name,event_date,status").eq("organization_id", currentOrgId!).ilike("name", like).limit(6),
+        supabase.from("events").select("id,title,event_date,status").eq("organization_id", currentOrgId!).ilike("title", like).limit(6),
         supabase.from("invoices").select("id,invoice_number,status,total").eq("organization_id", currentOrgId!).ilike("invoice_number", like).limit(6),
         supabase.from("items").select("id,name,sku").eq("organization_id", currentOrgId!).ilike("name", like).limit(6),
       ]);
@@ -186,11 +186,11 @@ export function CommandPalette() {
                     {results.events.map((e: any) => (
                       <CommandItem
                         key={e.id}
-                        value={`event ${e.name}`}
+                        value={`event ${e.title}`}
                         onSelect={() => go("/app/events/$id", { id: e.id })}
                       >
                         <CalendarDays className="mr-2 h-4 w-4" />
-                        <span>{e.name}</span>
+                        <span>{e.title}</span>
                         <span className="ml-2 text-xs text-muted-foreground">
                           {e.event_date} · {e.status}
                         </span>
