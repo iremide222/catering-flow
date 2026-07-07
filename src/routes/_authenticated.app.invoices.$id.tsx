@@ -105,6 +105,7 @@ function InvoiceDetail() {
       notes: pay.notes || null,
     });
     if (error) return toast.error(error.message);
+    audit("payment_recorded", "invoice", id, { amount: amt, method: pay.method || null });
     toast.success("Payment recorded");
     setPayOpen(false);
     setPay({ amount: "", payment_date: new Date().toISOString().slice(0, 10), method: "", reference: "", notes: "" });

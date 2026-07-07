@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useAuth } from "@/lib/auth-context";
+import { useAuditLog } from "@/lib/use-audit";
 import { formatCurrency, formatDate } from "@/lib/format";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -24,6 +25,7 @@ function PoDetail() {
   const { id } = Route.useParams();
   const { currentOrgId, organizations } = useAuth();
   const qc = useQueryClient();
+  const audit = useAuditLog();
   const currency = organizations.find((o) => o.id === currentOrgId)?.currency ?? "USD";
 
   const { data } = useQuery({
@@ -76,6 +78,7 @@ function PoDetail() {
   const updateStatus = async (status: string) => {
     const { error } = await supabase.from("purchase_orders").update({ status: status as any }).eq("id", id);
     if (error) return toast.error(error.message);
+    audit("status_change", "purchase_order", id, { status });
     qc.invalidateQueries({ queryKey: ["po", id] });
   };
 
