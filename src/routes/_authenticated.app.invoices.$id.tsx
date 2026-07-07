@@ -85,6 +85,7 @@ function InvoiceDetail() {
   const setStatus = async (status: string) => {
     const { error } = await supabase.from("invoices").update({ status: status as any }).eq("id", id);
     if (error) return toast.error(error.message);
+    audit("status_change", "invoice", id, { status });
     qc.invalidateQueries({ queryKey: ["invoice", id] });
     qc.invalidateQueries({ queryKey: ["invoices"] });
   };
