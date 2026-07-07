@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useAuditLog } from "@/lib/use-audit";
 
 export const Route = createFileRoute("/_authenticated/app/purchase-orders/new")({
   head: () => ({ meta: [{ title: "New PO — CaterFlow" }] }),
@@ -18,6 +19,7 @@ export const Route = createFileRoute("/_authenticated/app/purchase-orders/new")(
 function NewPo() {
   const { currentOrgId, user } = useAuth();
   const navigate = useNavigate();
+  const audit = useAuditLog();
   const [form, setForm] = useState({ supplier_id: "", event_id: "", location_id: "", order_number: "", expected_date: "", notes: "" });
   const [saving, setSaving] = useState(false);
 
@@ -50,6 +52,7 @@ function NewPo() {
     }).select("id").single();
     setSaving(false);
     if (error) return toast.error(error.message);
+    audit("create", "purchase_order", data!.id, { order_number: form.order_number || null });
     toast.success("PO created");
     navigate({ to: "/app/purchase-orders/$id", params: { id: data!.id } });
   };

@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
+import { useAuditLog } from "@/lib/use-audit";
 
 export const Route = createFileRoute("/_authenticated/app/events/new")({
   head: () => ({ meta: [{ title: "New event — CaterFlow" }] }),
@@ -19,6 +20,7 @@ export const Route = createFileRoute("/_authenticated/app/events/new")({
 function NewEvent() {
   const { currentOrgId, user } = useAuth();
   const navigate = useNavigate();
+  const audit = useAuditLog();
   const [form, setForm] = useState({
     title: "", customer_id: "", event_date: "", start_time: "", end_time: "",
     venue: "", guest_count: "", notes: "",
@@ -52,6 +54,7 @@ function NewEvent() {
     }).select("id").single();
     setBusy(false);
     if (error) return toast.error(error.message);
+    audit("create", "event", data!.id, { title: form.title, event_date: form.event_date });
     toast.success("Event created");
     navigate({ to: "/app/events/$id", params: { id: data!.id } });
   };
