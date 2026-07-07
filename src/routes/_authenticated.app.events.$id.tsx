@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useAuth } from "@/lib/auth-context";
+import { useAuditLog } from "@/lib/use-audit";
 import { formatCurrency, formatDate } from "@/lib/format";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -24,6 +25,7 @@ function EventDetail() {
   const { id } = Route.useParams();
   const { organizations, currentOrgId } = useAuth();
   const qc = useQueryClient();
+  const audit = useAuditLog();
   const currency = organizations.find((o) => o.id === currentOrgId)?.currency ?? "USD";
 
   const { data } = useQuery({
@@ -97,6 +99,7 @@ function EventDetail() {
   const updateStatus = async (status: string) => {
     const { error } = await supabase.from("events").update({ status: status as any }).eq("id", id);
     if (error) return toast.error(error.message);
+    audit("status_change", "event", id, { status });
     toast.success("Status updated");
     qc.invalidateQueries({ queryKey: ["event", id] });
   };

@@ -11,6 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Plus, Trash2 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
+import { useAuditLog } from "@/lib/use-audit";
 
 export const Route = createFileRoute("/_authenticated/app/invoices/new")({
   head: () => ({ meta: [{ title: "New invoice — CaterFlow" }] }),
@@ -23,6 +24,7 @@ const emptyLine: Line = { description: "", quantity: "1", unit_price: "0" };
 function NewInvoice() {
   const { currentOrgId, user } = useAuth();
   const navigate = useNavigate();
+  const audit = useAuditLog();
   const [number, setNumber] = useState("");
   const [customerId, setCustomerId] = useState("none");
   const [eventId, setEventId] = useState("none");
@@ -101,6 +103,7 @@ function NewInvoice() {
     const { error: itemsErr } = await supabase.from("invoice_items").insert(itemsPayload);
     setSaving(false);
     if (itemsErr) return toast.error(itemsErr.message);
+    audit("create", "invoice", inv.id, { invoice_number: number.trim(), total });
     toast.success("Invoice created");
     navigate({ to: "/app/invoices/$id", params: { id: inv.id } });
   };

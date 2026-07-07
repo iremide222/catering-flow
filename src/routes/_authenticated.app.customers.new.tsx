@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { useAuditLog } from "@/lib/use-audit";
 
 export const Route = createFileRoute("/_authenticated/app/customers/new")({
   head: () => ({ meta: [{ title: "New customer — CaterFlow" }] }),
@@ -17,6 +18,7 @@ export const Route = createFileRoute("/_authenticated/app/customers/new")({
 function NewCustomer() {
   const { currentOrgId, user } = useAuth();
   const navigate = useNavigate();
+  const audit = useAuditLog();
   const [form, setForm] = useState({ name: "", email: "", phone: "", address: "", preferences: "", tags: "", notes: "" });
   const [busy, setBusy] = useState(false);
 
@@ -38,6 +40,7 @@ function NewCustomer() {
     }).select("id").single();
     setBusy(false);
     if (error) return toast.error(error.message);
+    audit("create", "customer", data!.id, { name: form.name });
     toast.success("Customer created");
     navigate({ to: "/app/customers/$id", params: { id: data!.id } });
   };

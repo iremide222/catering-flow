@@ -14,6 +14,7 @@ import { Plus, Trash2, ArrowLeft, Download } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { formatCurrency, formatDate } from "@/lib/format";
+import { useAuditLog } from "@/lib/use-audit";
 import { useServerFn } from "@tanstack/react-start";
 import { generateInvoicePdf } from "@/lib/pdf.functions";
 import { downloadBase64Pdf } from "@/lib/download-pdf";
@@ -32,6 +33,7 @@ function InvoiceDetail() {
   const { currentOrgId, organizations, user } = useAuth();
   const navigate = useNavigate();
   const qc = useQueryClient();
+  const audit = useAuditLog();
   const currency = organizations.find((o) => o.id === currentOrgId)?.currency ?? "USD";
   const [payOpen, setPayOpen] = useState(false);
   const [pay, setPay] = useState({ amount: "", payment_date: new Date().toISOString().slice(0, 10), method: "", reference: "", notes: "" });
@@ -83,6 +85,7 @@ function InvoiceDetail() {
   const setStatus = async (status: string) => {
     const { error } = await supabase.from("invoices").update({ status: status as any }).eq("id", id);
     if (error) return toast.error(error.message);
+    audit("status_change", "invoice", id, { status });
     qc.invalidateQueries({ queryKey: ["invoice", id] });
     qc.invalidateQueries({ queryKey: ["invoices"] });
   };
@@ -102,6 +105,7 @@ function InvoiceDetail() {
       notes: pay.notes || null,
     });
     if (error) return toast.error(error.message);
+    audit("payment_recorded", "invoice", id, { amount: amt, method: pay.method || null });
     toast.success("Payment recorded");
     setPayOpen(false);
     setPay({ amount: "", payment_date: new Date().toISOString().slice(0, 10), method: "", reference: "", notes: "" });
