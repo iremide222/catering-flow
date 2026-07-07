@@ -33,6 +33,7 @@ function InvoiceDetail() {
   const { currentOrgId, organizations, user } = useAuth();
   const navigate = useNavigate();
   const qc = useQueryClient();
+  const audit = useAuditLog();
   const currency = organizations.find((o) => o.id === currentOrgId)?.currency ?? "USD";
   const [payOpen, setPayOpen] = useState(false);
   const [pay, setPay] = useState({ amount: "", payment_date: new Date().toISOString().slice(0, 10), method: "", reference: "", notes: "" });
