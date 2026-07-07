@@ -14,6 +14,7 @@ import { Plus, Trash2, ArrowLeft, Download } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { formatCurrency, formatDate } from "@/lib/format";
+import { useAuditLog } from "@/lib/use-audit";
 import { useServerFn } from "@tanstack/react-start";
 import { generateInvoicePdf } from "@/lib/pdf.functions";
 import { downloadBase64Pdf } from "@/lib/download-pdf";
