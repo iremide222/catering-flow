@@ -26,6 +26,8 @@ function EventDetail() {
   const { organizations, currentOrgId } = useAuth();
   const qc = useQueryClient();
   const audit = useAuditLog();
+  const navigate = useNavigate();
+  const [duplicating, setDuplicating] = useState(false);
   const currency = organizations.find((o) => o.id === currentOrgId)?.currency ?? "USD";
 
   const { data } = useQuery({
