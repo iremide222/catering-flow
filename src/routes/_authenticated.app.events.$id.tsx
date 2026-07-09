@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,7 +12,7 @@ import { useAuditLog } from "@/lib/use-audit";
 import { formatCurrency, formatDate } from "@/lib/format";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Trash2 } from "lucide-react";
+import { Trash2, Copy } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/app/events/$id")({
   head: () => ({ meta: [{ title: "Event — CaterFlow" }] }),
@@ -26,6 +26,8 @@ function EventDetail() {
   const { organizations, currentOrgId } = useAuth();
   const qc = useQueryClient();
   const audit = useAuditLog();
+  const navigate = useNavigate();
+  const [duplicating, setDuplicating] = useState(false);
   const currency = organizations.find((o) => o.id === currentOrgId)?.currency ?? "USD";
 
   const { data } = useQuery({
@@ -116,6 +118,53 @@ function EventDetail() {
     qc.invalidateQueries({ queryKey: ["event", id] });
   };
 
+  const duplicateEvent = async () => {
+    if (!data?.event || !currentOrgId) return;
+    setDuplicating(true);
+    const src: any = data.event;
+    const { data: created, error } = await supabase
+      .from("events")
+      .insert({
+        organization_id: currentOrgId,
+        customer_id: src.customer_id,
+        title: `${src.title} (copy)`,
+        event_date: src.event_date,
+        start_time: src.start_time,
+        end_time: src.end_time,
+        venue: src.venue,
+        guest_count: src.guest_count,
+        notes: src.notes,
+        status: "inquiry" as any,
+        total_amount: 0,
+      })
+      .select("id")
+      .single();
+    if (error || !created) {
+      setDuplicating(false);
+      return toast.error(error?.message ?? "Could not duplicate event");
+    }
+    if (data.items.length > 0) {
+      const rows = data.items.map((i: any) => ({
+        event_id: created.id,
+        name: i.name,
+        quantity: i.quantity,
+        unit_price: i.unit_price,
+        description: i.description ?? null,
+      }));
+      const { error: itemsErr } = await supabase.from("event_items").insert(rows);
+      if (itemsErr) {
+        setDuplicating(false);
+        return toast.error(itemsErr.message);
+      }
+      const total = rows.reduce((s, r) => s + Number(r.quantity) * Number(r.unit_price), 0);
+      await supabase.from("events").update({ total_amount: total }).eq("id", created.id);
+    }
+    audit("duplicate", "event", created.id, { from_event_id: id });
+    setDuplicating(false);
+    toast.success("Event duplicated");
+    navigate({ to: "/app/events/$id", params: { id: created.id } });
+  };
+
   if (!data?.event) return <div className="text-sm text-muted-foreground">Loading…</div>;
   const e = data.event;
 
@@ -136,6 +185,9 @@ function EventDetail() {
           )}
         </div>
         <div className="flex items-center gap-3">
+          <Button variant="outline" size="sm" onClick={duplicateEvent} disabled={duplicating}>
+            <Copy className="mr-2 h-4 w-4" /> {duplicating ? "Duplicating…" : "Duplicate"}
+          </Button>
           <Select value={e.status} onValueChange={updateStatus}>
             <SelectTrigger className="w-40"><SelectValue /></SelectTrigger>
             <SelectContent>{STATUSES.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
