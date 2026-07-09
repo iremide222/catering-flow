@@ -19,8 +19,10 @@ function Dashboard() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!loading && organizations.length === 0) navigate({ to: "/app/onboarding" });
-  }, [loading, organizations.length, navigate]);
+    if (!loading && organizations.length === 0 && !currentOrgId) {
+      navigate({ to: "/app/onboarding" });
+    }
+  }, [loading, organizations.length, currentOrgId, navigate]);
 
   const currency = organizations.find((o) => o.id === currentOrgId)?.currency ?? "USD";
 
