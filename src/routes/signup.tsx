@@ -46,6 +46,9 @@ function SignUp() {
     <div className="flex min-h-screen items-center justify-center bg-muted/30 p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
+          <Link to="/" className="mb-2 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
+            ← Back to home
+          </Link>
           <CardTitle>Create your workspace</CardTitle>
           <CardDescription>Start managing your catering operations in minutes.</CardDescription>
         </CardHeader>
