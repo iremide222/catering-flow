@@ -185,6 +185,9 @@ function EventDetail() {
           )}
         </div>
         <div className="flex items-center gap-3">
+          <Button variant="outline" size="sm" onClick={duplicateEvent} disabled={duplicating}>
+            <Copy className="mr-2 h-4 w-4" /> {duplicating ? "Duplicating…" : "Duplicate"}
+          </Button>
           <Select value={e.status} onValueChange={updateStatus}>
             <SelectTrigger className="w-40"><SelectValue /></SelectTrigger>
             <SelectContent>{STATUSES.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
