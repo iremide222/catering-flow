@@ -121,7 +121,7 @@ function EventDetail() {
   const duplicateEvent = async () => {
     if (!data?.event || !currentOrgId) return;
     setDuplicating(true);
-    const src = data.event;
+    const src: any = data.event;
     const { data: created, error } = await supabase
       .from("events")
       .insert({
@@ -133,7 +133,6 @@ function EventDetail() {
         end_time: src.end_time,
         venue: src.venue,
         guest_count: src.guest_count,
-        service_type: src.service_type,
         notes: src.notes,
         status: "inquiry" as any,
         total_amount: 0,
@@ -150,7 +149,7 @@ function EventDetail() {
         name: i.name,
         quantity: i.quantity,
         unit_price: i.unit_price,
-        notes: i.notes ?? null,
+        description: i.description ?? null,
       }));
       const { error: itemsErr } = await supabase.from("event_items").insert(rows);
       if (itemsErr) {
