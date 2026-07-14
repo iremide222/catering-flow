@@ -72,6 +72,14 @@ function NewInvoice() {
     }
   };
 
+  useEffect(() => {
+    if (search.event && events.length > 0 && eventId === "none") {
+      prefillFromEvent(search.event);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search.event, events.length]);
+
+
   const submit = async () => {
     if (!currentOrgId || !user) return;
     if (!number.trim()) return toast.error("Invoice number is required");
