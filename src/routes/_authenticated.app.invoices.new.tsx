@@ -26,6 +26,7 @@ const emptyLine: Line = { description: "", quantity: "1", unit_price: "0" };
 function NewInvoice() {
   const { currentOrgId, user } = useAuth();
   const navigate = useNavigate();
+  const search = Route.useSearch();
   const audit = useAuditLog();
   const [number, setNumber] = useState("");
   const [customerId, setCustomerId] = useState("none");
