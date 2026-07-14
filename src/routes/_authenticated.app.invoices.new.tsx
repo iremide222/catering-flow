@@ -9,12 +9,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Plus, Trash2 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { useAuditLog } from "@/lib/use-audit";
+import { z } from "zod";
 
 export const Route = createFileRoute("/_authenticated/app/invoices/new")({
   head: () => ({ meta: [{ title: "New invoice — CaterFlow" }] }),
+  validateSearch: z.object({ event: z.string().optional() }),
   component: NewInvoice,
 });
 
@@ -24,6 +26,7 @@ const emptyLine: Line = { description: "", quantity: "1", unit_price: "0" };
 function NewInvoice() {
   const { currentOrgId, user } = useAuth();
   const navigate = useNavigate();
+  const search = Route.useSearch();
   const audit = useAuditLog();
   const [number, setNumber] = useState("");
   const [customerId, setCustomerId] = useState("none");
@@ -68,6 +71,14 @@ function NewInvoice() {
       setLines([{ description: `Catering for ${ev.title}`, quantity: "1", unit_price: String(ev.total_amount) }]);
     }
   };
+
+  useEffect(() => {
+    if (search.event && events.length > 0 && eventId === "none") {
+      prefillFromEvent(search.event);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search.event, events.length]);
+
 
   const submit = async () => {
     if (!currentOrgId || !user) return;

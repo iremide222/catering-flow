@@ -12,7 +12,7 @@ import { useAuditLog } from "@/lib/use-audit";
 import { formatCurrency, formatDate } from "@/lib/format";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Trash2, Copy } from "lucide-react";
+import { Trash2, Copy, FileText } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/app/events/$id")({
   head: () => ({ meta: [{ title: "Event — CaterFlow" }] }),
@@ -187,6 +187,11 @@ function EventDetail() {
         <div className="flex items-center gap-3">
           <Button variant="outline" size="sm" onClick={duplicateEvent} disabled={duplicating}>
             <Copy className="mr-2 h-4 w-4" /> {duplicating ? "Duplicating…" : "Duplicate"}
+          </Button>
+          <Button variant="outline" size="sm" asChild>
+            <Link to="/app/invoices/new" search={{ event: id }}>
+              <FileText className="mr-2 h-4 w-4" /> Create invoice
+            </Link>
           </Button>
           <Select value={e.status} onValueChange={updateStatus}>
             <SelectTrigger className="w-40"><SelectValue /></SelectTrigger>
