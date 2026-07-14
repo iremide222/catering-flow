@@ -9,12 +9,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Plus, Trash2 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { useAuditLog } from "@/lib/use-audit";
+import { z } from "zod";
 
 export const Route = createFileRoute("/_authenticated/app/invoices/new")({
   head: () => ({ meta: [{ title: "New invoice — CaterFlow" }] }),
+  validateSearch: z.object({ event: z.string().optional() }),
   component: NewInvoice,
 });
 
