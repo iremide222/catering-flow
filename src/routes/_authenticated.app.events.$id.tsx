@@ -12,7 +12,7 @@ import { useAuditLog } from "@/lib/use-audit";
 import { formatCurrency, formatDate } from "@/lib/format";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Trash2, Copy } from "lucide-react";
+import { Trash2, Copy, FileText } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/app/events/$id")({
   head: () => ({ meta: [{ title: "Event — CaterFlow" }] }),
