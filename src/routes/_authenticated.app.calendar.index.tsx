@@ -15,12 +15,11 @@ export const Route = createFileRoute("/_authenticated/app/calendar/")({
 });
 
 const STATUS_COLOR: Record<string, string> = {
-  inquiry: "bg-muted text-muted-foreground",
-  quoted: "bg-blue-500/15 text-blue-700 dark:text-blue-300",
-  confirmed: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300",
-  in_progress: "bg-amber-500/15 text-amber-700 dark:text-amber-300",
-  completed: "bg-primary/15 text-primary",
-  cancelled: "bg-destructive/15 text-destructive",
+  quotation: "bg-blue-500/15 text-blue-700 dark:text-blue-300",
+  planning: "bg-amber-500/15 text-amber-700 dark:text-amber-300",
+  execution: "bg-violet-500/15 text-violet-700 dark:text-violet-300",
+  delivered: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300",
+  closed: "bg-slate-500/15 text-slate-700 dark:text-slate-300",
 };
 
 function startOfMonth(d: Date) { return new Date(d.getFullYear(), d.getMonth(), 1); }
