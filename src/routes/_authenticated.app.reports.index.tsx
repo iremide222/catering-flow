@@ -27,7 +27,7 @@ function Reports() {
         supabase.from("invoices").select("id,total,amount_paid,status,issue_date,due_date,customer_id,customers(name)").eq("organization_id", orgId),
         supabase.from("payments").select("amount,payment_date").eq("organization_id", orgId).gte("payment_date", startOfWindow),
         supabase.from("events").select("id,total_amount,status,event_date").eq("organization_id", orgId).gte("event_date", startOfWindow),
-        supabase.from("purchase_orders").select("total_amount,status,order_date").eq("organization_id", orgId).gte("order_date", startOfWindow),
+        supabase.from("purchase_orders").select("total,status,created_at").eq("organization_id", orgId).gte("created_at", startOfWindow),
       ]);
 
       // Monthly buckets last 6 months
@@ -51,9 +51,9 @@ function Reports() {
         if (b) b.payments += Number(p.amount);
       });
       (pos ?? []).forEach((p: any) => {
-        if (!p.order_date) return;
-        const b = bucket(p.order_date);
-        if (b) b.spend += Number(p.total_amount ?? 0);
+        if (!p.created_at) return;
+        const b = bucket(p.created_at);
+        if (b) b.spend += Number(p.total ?? 0);
       });
 
       // AR aging
