@@ -23,7 +23,7 @@ const STATUSES = ["inquiry", "quotation", "confirmed", "planning", "execution", 
 
 function EventDetail() {
   const { id } = Route.useParams();
-  const { organizations, currentOrgId } = useAuth();
+  const { user, organizations, currentOrgId } = useAuth();
   const qc = useQueryClient();
   const audit = useAuditLog();
   const navigate = useNavigate();
@@ -119,7 +119,7 @@ function EventDetail() {
   };
 
   const duplicateEvent = async () => {
-    if (!data?.event || !currentOrgId) return;
+    if (!data?.event || !currentOrgId || !user) return;
     setDuplicating(true);
     const src: any = data.event;
     const { data: created, error } = await supabase
@@ -136,6 +136,7 @@ function EventDetail() {
         notes: src.notes,
         status: "inquiry" as any,
         total_amount: 0,
+        created_by: user.id,
       })
       .select("id")
       .single();
