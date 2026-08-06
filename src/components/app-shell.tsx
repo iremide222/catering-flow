@@ -170,7 +170,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           <NotificationBell />
         </div>
         <nav className="flex-1 space-y-1 p-3">
-          {nav.map((item) => {
+          {visibleNav.map((item) => {
             const Icon = item.icon;
             const active = item.exact
               ? location.pathname === item.to
