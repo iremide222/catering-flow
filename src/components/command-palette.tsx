@@ -148,19 +148,23 @@ export function CommandPalette() {
             </CommandGroup>
           )}
 
-          <CommandSeparator />
-          <CommandGroup heading="Create">
-            {allowedCreate.map((c) => {
-              const Icon = c.icon;
-              return (
-                <CommandItem key={c.to} value={`create ${c.label}`} onSelect={() => go(c.to)}>
-                  <Plus className="mr-2 h-4 w-4 text-muted-foreground" />
-                  <Icon className="mr-2 h-4 w-4" />
-                  {c.label}
-                </CommandItem>
-              );
-            })}
-          </CommandGroup>
+          {allowedCreate.length > 0 && (
+            <>
+              <CommandSeparator />
+              <CommandGroup heading="Create">
+                {allowedCreate.map((c) => {
+                  const Icon = c.icon;
+                  return (
+                    <CommandItem key={c.to} value={`create ${c.label}`} onSelect={() => go(c.to)}>
+                      <Plus className="mr-2 h-4 w-4 text-muted-foreground" />
+                      <Icon className="mr-2 h-4 w-4" />
+                      {c.label}
+                    </CommandItem>
+                  );
+                })}
+              </CommandGroup>
+            </>
+          )}
 
           {enabled && results && (
             <>
