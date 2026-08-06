@@ -215,7 +215,21 @@ export function AppShell({ children }: { children: ReactNode }) {
         <div className="flex items-center justify-end border-b bg-card/50 px-6 py-2 md:px-8">
           <CommandPalette />
         </div>
-        <div className="mx-auto max-w-7xl p-6 md:p-8">{children}</div>
+        <div className="mx-auto max-w-7xl p-6 md:p-8">
+          {allowed ? (
+            children
+          ) : (
+            <div className="mx-auto max-w-md rounded-lg border bg-card p-8 text-center">
+              <h1 className="text-lg font-semibold">Access restricted</h1>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Your role doesn’t have permission to view this page. Contact a workspace admin if you need access.
+              </p>
+              <Button className="mt-4" variant="outline" onClick={() => navigate({ to: "/app" })}>
+                Back to dashboard
+              </Button>
+            </div>
+          )}
+        </div>
       </main>
     </div>
   );
