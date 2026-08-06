@@ -108,7 +108,7 @@ function PoDetail() {
           <h1 className="text-2xl font-semibold tracking-tight">{p.order_number ?? `PO ${p.id.slice(0, 8)}`}</h1>
           <div className="mt-1 text-sm text-muted-foreground">
             {p.suppliers?.name} · expected {formatDate(p.expected_date)} · receive to {p.locations?.name ?? "—"}
-            {p.events && <> · event <Link to="/app/events/$id" params={{ id: p.event_id }} className="text-primary hover:underline">{p.events.title}</Link></>}
+            {p.events && p.event_id && <> · event <Link to="/app/events/$id" params={{ id: p.event_id }} className="text-primary hover:underline">{p.events.title}</Link></>}
           </div>
         </div>
         <div className="flex items-center gap-3">
