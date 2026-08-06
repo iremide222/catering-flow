@@ -3,6 +3,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
+import { canAccessPath } from "@/lib/permissions";
 import {
   CommandDialog,
   CommandEmpty,
@@ -57,7 +58,7 @@ export function CommandPalette() {
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState("");
   const navigate = useNavigate();
-  const { currentOrgId } = useAuth();
+  const { currentOrgId, roles } = useAuth();
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -149,7 +150,7 @@ export function CommandPalette() {
 
           <CommandSeparator />
           <CommandGroup heading="Create">
-            {QUICK_CREATE.map((c) => {
+            {allowedCreate.map((c) => {
               const Icon = c.icon;
               return (
                 <CommandItem key={c.to} value={`create ${c.label}`} onSelect={() => go(c.to)}>
