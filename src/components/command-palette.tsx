@@ -93,11 +93,14 @@ export function CommandPalette() {
     },
   });
 
+  const allowedNav = useMemo(() => QUICK_NAV.filter((n) => canAccessPath(roles, n.to)), [roles]);
+  const allowedCreate = useMemo(() => QUICK_CREATE.filter((c) => canAccessPath(roles, c.to)), [roles]);
+
   const filteredNav = useMemo(() => {
-    if (!term) return QUICK_NAV;
+    if (!term) return allowedNav;
     const t = term.toLowerCase();
-    return QUICK_NAV.filter((n) => n.label.toLowerCase().includes(t));
-  }, [term]);
+    return allowedNav.filter((n) => n.label.toLowerCase().includes(t));
+  }, [term, allowedNav]);
 
   const go = (to: string, params?: Record<string, string>) => {
     setOpen(false);
