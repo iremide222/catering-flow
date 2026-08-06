@@ -151,10 +151,13 @@ function NotificationBell() {
 }
 
 export function AppShell({ children }: { children: ReactNode }) {
-  const { user, organizations, currentOrgId, setCurrentOrg, signOut } = useAuth();
+  const { user, organizations, currentOrgId, roles, setCurrentOrg, signOut } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const currentOrg = organizations.find((o) => o.id === currentOrgId);
+  const visibleNav = nav.filter((item) => canAccessPath(roles, item.to));
+  const allowed = canAccessPath(roles, location.pathname);
+
 
   return (
     <div className="flex min-h-screen bg-muted/20">
