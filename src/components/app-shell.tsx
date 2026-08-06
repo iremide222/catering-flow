@@ -29,6 +29,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CommandPalette } from "@/components/command-palette";
+import { canAccessPath } from "@/lib/permissions";
 
 const BELL_ICON: Record<string, React.ElementType> = {
   low_stock: Package,
