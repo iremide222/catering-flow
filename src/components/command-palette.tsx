@@ -3,6 +3,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
+import { canAccessPath } from "@/lib/permissions";
 import {
   CommandDialog,
   CommandEmpty,
@@ -57,7 +58,7 @@ export function CommandPalette() {
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState("");
   const navigate = useNavigate();
-  const { currentOrgId } = useAuth();
+  const { currentOrgId, roles } = useAuth();
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -93,11 +94,14 @@ export function CommandPalette() {
     },
   });
 
+  const allowedNav = useMemo(() => QUICK_NAV.filter((n) => canAccessPath(roles, n.to)), [roles]);
+  const allowedCreate = useMemo(() => QUICK_CREATE.filter((c) => canAccessPath(roles, c.to)), [roles]);
+
   const filteredNav = useMemo(() => {
-    if (!term) return QUICK_NAV;
+    if (!term) return allowedNav;
     const t = term.toLowerCase();
-    return QUICK_NAV.filter((n) => n.label.toLowerCase().includes(t));
-  }, [term]);
+    return allowedNav.filter((n) => n.label.toLowerCase().includes(t));
+  }, [term, allowedNav]);
 
   const go = (to: string, params?: Record<string, string>) => {
     setOpen(false);
@@ -144,19 +148,23 @@ export function CommandPalette() {
             </CommandGroup>
           )}
 
-          <CommandSeparator />
-          <CommandGroup heading="Create">
-            {QUICK_CREATE.map((c) => {
-              const Icon = c.icon;
-              return (
-                <CommandItem key={c.to} value={`create ${c.label}`} onSelect={() => go(c.to)}>
-                  <Plus className="mr-2 h-4 w-4 text-muted-foreground" />
-                  <Icon className="mr-2 h-4 w-4" />
-                  {c.label}
-                </CommandItem>
-              );
-            })}
-          </CommandGroup>
+          {allowedCreate.length > 0 && (
+            <>
+              <CommandSeparator />
+              <CommandGroup heading="Create">
+                {allowedCreate.map((c) => {
+                  const Icon = c.icon;
+                  return (
+                    <CommandItem key={c.to} value={`create ${c.label}`} onSelect={() => go(c.to)}>
+                      <Plus className="mr-2 h-4 w-4 text-muted-foreground" />
+                      <Icon className="mr-2 h-4 w-4" />
+                      {c.label}
+                    </CommandItem>
+                  );
+                })}
+              </CommandGroup>
+            </>
+          )}
 
           {enabled && results && (
             <>
