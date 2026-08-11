@@ -180,6 +180,53 @@ function EventDetail() {
     navigate({ to: "/app/events/$id", params: { id: created.id } });
   };
 
+  const openEdit = () => {
+    const src: any = data?.event;
+    if (!src) return;
+    setEditForm({
+      title: src.title ?? "",
+      event_date: src.event_date ?? "",
+      venue: src.venue ?? "",
+      status: src.status ?? "inquiry",
+    });
+    setEditErrors({});
+    setEditOpen(true);
+  };
+
+  const saveEdit = async (ev: React.FormEvent) => {
+    ev.preventDefault();
+    const parsed = eventSchema.safeParse(editForm);
+    if (!parsed.success) {
+      const errs: Record<string, string> = {};
+      for (const issue of parsed.error.issues) errs[String(issue.path[0])] = issue.message;
+      setEditErrors(errs);
+      return;
+    }
+    setEditErrors({});
+    setSavingEdit(true);
+    const v = parsed.data;
+    const { error } = await supabase
+      .from("events")
+      .update({
+        title: v.title,
+        event_date: v.event_date || null,
+        venue: v.venue || null,
+        status: v.status as any,
+      })
+      .eq("id", id);
+    setSavingEdit(false);
+    if (error) {
+      toast.error(error.message || "Could not update event");
+      return;
+    }
+    audit("update", "event", id, { title: v.title, status: v.status });
+    toast.success("Event updated");
+    setEditOpen(false);
+    await qc.invalidateQueries({ queryKey: ["event", id] });
+    qc.invalidateQueries({ queryKey: ["events"] });
+  };
+
+
   if (!data?.event) return <div className="text-sm text-muted-foreground">Loading…</div>;
   const e = data.event;
 
