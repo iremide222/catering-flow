@@ -24,6 +24,13 @@ export const Route = createFileRoute("/_authenticated/app/events/$id")({
 
 const STATUSES = ["inquiry", "quotation", "confirmed", "planning", "execution", "delivered", "closed", "cancelled"];
 
+const eventSchema = z.object({
+  title: z.string().trim().min(1, { message: "Title is required" }).max(120, { message: "Title must be under 120 characters" }),
+  event_date: z.union([z.string().regex(/^\d{4}-\d{2}-\d{2}$/, { message: "Use a valid date" }), z.literal("")]),
+  venue: z.string().trim().max(200, { message: "Venue must be under 200 characters" }),
+  status: z.enum(["inquiry", "quotation", "confirmed", "planning", "execution", "delivered", "closed", "cancelled"]),
+});
+
 function EventDetail() {
   const { id } = Route.useParams();
   const { user, organizations, currentOrgId } = useAuth();
@@ -31,6 +38,10 @@ function EventDetail() {
   const audit = useAuditLog();
   const navigate = useNavigate();
   const [duplicating, setDuplicating] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [savingEdit, setSavingEdit] = useState(false);
+  const [editForm, setEditForm] = useState({ title: "", event_date: "", venue: "", status: "inquiry" });
+  const [editErrors, setEditErrors] = useState<Record<string, string>>({});
   const currency = organizations.find((o) => o.id === currentOrgId)?.currency ?? "USD";
 
   const { data } = useQuery({
