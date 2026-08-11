@@ -266,6 +266,44 @@ function EventDetail() {
         </div>
       </div>
 
+      <Dialog open={editOpen} onOpenChange={setEditOpen}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>Edit event</DialogTitle></DialogHeader>
+          <form onSubmit={saveEdit} className="space-y-3">
+            <div className="space-y-1.5">
+              <Label>Title</Label>
+              <Input value={editForm.title} onChange={(ev) => setEditForm({ ...editForm, title: ev.target.value })} />
+              {editErrors['title'] && <p className="text-xs text-destructive">{editErrors['title']}</p>}
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label>Event date</Label>
+                <Input type="date" value={editForm.event_date} onChange={(ev) => setEditForm({ ...editForm, event_date: ev.target.value })} />
+                {editErrors['event_date'] && <p className="text-xs text-destructive">{editErrors['event_date']}</p>}
+              </div>
+              <div className="space-y-1.5">
+                <Label>Status</Label>
+                <Select value={editForm.status} onValueChange={(v) => setEditForm({ ...editForm, status: v })}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>{STATUSES.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="space-y-1.5">
+              <Label>Venue</Label>
+              <Input value={editForm.venue} onChange={(ev) => setEditForm({ ...editForm, venue: ev.target.value })} />
+              {editErrors['venue'] && <p className="text-xs text-destructive">{editErrors['venue']}</p>}
+            </div>
+            <DialogFooter>
+              <Button type="button" variant="ghost" onClick={() => setEditOpen(false)} disabled={savingEdit}>Cancel</Button>
+              <Button type="submit" disabled={savingEdit}>{savingEdit ? "Saving…" : "Save changes"}</Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+
+
       <Card>
         <CardHeader><CardTitle>Menu / line items</CardTitle></CardHeader>
         <CardContent className="space-y-4">
