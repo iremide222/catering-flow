@@ -204,3 +204,13 @@ function Stat({ label, value }: { label: string; value: any }) {
 function Row({ k, v }: { k: string; v?: string | null }) {
   return <div className="grid grid-cols-3 gap-2"><div className="text-muted-foreground">{k}</div><div className="col-span-2">{v || "—"}</div></div>;
 }
+
+function EditField({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {
+  return (
+    <div className="space-y-1.5">
+      <Label>{label}</Label>
+      {children}
+      {error && <p className="text-xs text-destructive">{error}</p>}
+    </div>
+  );
+}
