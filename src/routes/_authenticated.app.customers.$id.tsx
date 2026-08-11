@@ -1,10 +1,30 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import { z } from "zod";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Pencil } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
+import { useAuditLog } from "@/lib/use-audit";
 import { formatCurrency, formatDate } from "@/lib/format";
+
+const customerSchema = z.object({
+  name: z.string().trim().min(1, { message: "Name is required" }).max(100, { message: "Name must be under 100 characters" }),
+  email: z.union([z.string().trim().email({ message: "Invalid email address" }).max(255), z.literal("")]),
+  phone: z.string().trim().max(30, { message: "Phone must be under 30 characters" }),
+  address: z.string().trim().max(300, { message: "Address must be under 300 characters" }),
+  preferences: z.string().trim().max(1000, { message: "Preferences must be under 1000 characters" }),
+  tags: z.string().trim().max(200, { message: "Tags must be under 200 characters" }),
+  notes: z.string().trim().max(2000, { message: "Notes must be under 2000 characters" }),
+});
 
 export const Route = createFileRoute("/_authenticated/app/customers/$id")({
   head: () => ({ meta: [{ title: "Customer — CaterFlow" }] }),
