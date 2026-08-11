@@ -1,10 +1,13 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useAuth } from "@/lib/auth-context";
@@ -12,7 +15,7 @@ import { useAuditLog } from "@/lib/use-audit";
 import { formatCurrency, formatDate } from "@/lib/format";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Trash2, Copy, FileText } from "lucide-react";
+import { Trash2, Copy, FileText, Pencil } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/app/events/$id")({
   head: () => ({ meta: [{ title: "Event — CaterFlow" }] }),
@@ -21,6 +24,13 @@ export const Route = createFileRoute("/_authenticated/app/events/$id")({
 
 const STATUSES = ["inquiry", "quotation", "confirmed", "planning", "execution", "delivered", "closed", "cancelled"];
 
+const eventSchema = z.object({
+  title: z.string().trim().min(1, { message: "Title is required" }).max(120, { message: "Title must be under 120 characters" }),
+  event_date: z.union([z.string().regex(/^\d{4}-\d{2}-\d{2}$/, { message: "Use a valid date" }), z.literal("")]),
+  venue: z.string().trim().max(200, { message: "Venue must be under 200 characters" }),
+  status: z.enum(["inquiry", "quotation", "confirmed", "planning", "execution", "delivered", "closed", "cancelled"]),
+});
+
 function EventDetail() {
   const { id } = Route.useParams();
   const { user, organizations, currentOrgId } = useAuth();
@@ -28,6 +38,10 @@ function EventDetail() {
   const audit = useAuditLog();
   const navigate = useNavigate();
   const [duplicating, setDuplicating] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [savingEdit, setSavingEdit] = useState(false);
+  const [editForm, setEditForm] = useState({ title: "", event_date: "", venue: "", status: "inquiry" });
+  const [editErrors, setEditErrors] = useState<Record<string, string>>({});
   const currency = organizations.find((o) => o.id === currentOrgId)?.currency ?? "USD";
 
   const { data } = useQuery({
@@ -166,6 +180,53 @@ function EventDetail() {
     navigate({ to: "/app/events/$id", params: { id: created.id } });
   };
 
+  const openEdit = () => {
+    const src: any = data?.event;
+    if (!src) return;
+    setEditForm({
+      title: src.title ?? "",
+      event_date: src.event_date ?? "",
+      venue: src.venue ?? "",
+      status: src.status ?? "inquiry",
+    });
+    setEditErrors({});
+    setEditOpen(true);
+  };
+
+  const saveEdit = async (ev: React.FormEvent) => {
+    ev.preventDefault();
+    const parsed = eventSchema.safeParse(editForm);
+    if (!parsed.success) {
+      const errs: Record<string, string> = {};
+      for (const issue of parsed.error.issues) errs[String(issue.path[0])] = issue.message;
+      setEditErrors(errs);
+      return;
+    }
+    setEditErrors({});
+    setSavingEdit(true);
+    const v = parsed.data;
+    const { error } = await supabase
+      .from("events")
+      .update({
+        title: v.title,
+        event_date: v.event_date || null,
+        venue: v.venue || null,
+        status: v.status as any,
+      })
+      .eq("id", id);
+    setSavingEdit(false);
+    if (error) {
+      toast.error(error.message || "Could not update event");
+      return;
+    }
+    audit("update", "event", id, { title: v.title, status: v.status });
+    toast.success("Event updated");
+    setEditOpen(false);
+    await qc.invalidateQueries({ queryKey: ["event", id] });
+    qc.invalidateQueries({ queryKey: ["events"] });
+  };
+
+
   if (!data?.event) return <div className="text-sm text-muted-foreground">Loading…</div>;
   const e = data.event;
 
@@ -186,6 +247,9 @@ function EventDetail() {
           )}
         </div>
         <div className="flex items-center gap-3">
+          <Button variant="outline" size="sm" onClick={openEdit}>
+            <Pencil className="mr-2 h-4 w-4" /> Edit
+          </Button>
           <Button variant="outline" size="sm" onClick={duplicateEvent} disabled={duplicating}>
             <Copy className="mr-2 h-4 w-4" /> {duplicating ? "Duplicating…" : "Duplicate"}
           </Button>
@@ -201,6 +265,44 @@ function EventDetail() {
           <Badge variant="secondary">{formatCurrency(Number(e.total_amount ?? 0), currency)}</Badge>
         </div>
       </div>
+
+      <Dialog open={editOpen} onOpenChange={setEditOpen}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>Edit event</DialogTitle></DialogHeader>
+          <form onSubmit={saveEdit} className="space-y-3">
+            <div className="space-y-1.5">
+              <Label>Title</Label>
+              <Input value={editForm.title} onChange={(ev) => setEditForm({ ...editForm, title: ev.target.value })} />
+              {editErrors['title'] && <p className="text-xs text-destructive">{editErrors['title']}</p>}
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label>Event date</Label>
+                <Input type="date" value={editForm.event_date} onChange={(ev) => setEditForm({ ...editForm, event_date: ev.target.value })} />
+                {editErrors['event_date'] && <p className="text-xs text-destructive">{editErrors['event_date']}</p>}
+              </div>
+              <div className="space-y-1.5">
+                <Label>Status</Label>
+                <Select value={editForm.status} onValueChange={(v) => setEditForm({ ...editForm, status: v })}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>{STATUSES.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="space-y-1.5">
+              <Label>Venue</Label>
+              <Input value={editForm.venue} onChange={(ev) => setEditForm({ ...editForm, venue: ev.target.value })} />
+              {editErrors['venue'] && <p className="text-xs text-destructive">{editErrors['venue']}</p>}
+            </div>
+            <DialogFooter>
+              <Button type="button" variant="ghost" onClick={() => setEditOpen(false)} disabled={savingEdit}>Cancel</Button>
+              <Button type="submit" disabled={savingEdit}>{savingEdit ? "Saving…" : "Save changes"}</Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+
 
       <Card>
         <CardHeader><CardTitle>Menu / line items</CardTitle></CardHeader>
