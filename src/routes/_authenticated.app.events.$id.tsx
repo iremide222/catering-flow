@@ -1,10 +1,13 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useAuth } from "@/lib/auth-context";
@@ -12,7 +15,7 @@ import { useAuditLog } from "@/lib/use-audit";
 import { formatCurrency, formatDate } from "@/lib/format";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Trash2, Copy, FileText } from "lucide-react";
+import { Trash2, Copy, FileText, Pencil } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/app/events/$id")({
   head: () => ({ meta: [{ title: "Event — CaterFlow" }] }),
