@@ -33,11 +33,27 @@ function Settings() {
     queryKey: ["members", currentOrgId],
     enabled: !!currentOrgId,
     queryFn: async () => {
-      const { data } = await supabase
+      const { data: rolesData, error: rolesError } = await supabase
         .from("user_roles")
-        .select("id,role,user_id,profiles:user_id(full_name)")
+        .select("id,role,user_id")
         .eq("organization_id", currentOrgId!);
-      return data ?? [];
+      if (rolesError) throw rolesError;
+
+      const userIds = [...new Set((rolesData ?? []).map((r) => r.user_id))];
+      let profiles: { id: string; full_name: string | null }[] = [];
+      if (userIds.length > 0) {
+        const { data: profilesData, error: profilesError } = await supabase
+          .from("profiles")
+          .select("id,full_name")
+          .in("id", userIds);
+        if (!profilesError) profiles = profilesData ?? [];
+      }
+
+      const profileMap = new Map(profiles.map((p) => [p.id, p]));
+      return (rolesData ?? []).map((m) => ({
+        ...m,
+        profiles: profileMap.get(m.user_id) ?? null,
+      }));
     },
   });
 
