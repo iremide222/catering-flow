@@ -3,10 +3,12 @@ import { type ReactNode, useState, useEffect, useRef } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getNotifications, syncNotifications } from "@/lib/notifications.functions";
 import { formatDate } from "@/lib/format";
+import { useIsMobile } from "@/hooks/use-mobile";
 import {
   LayoutDashboard,
   Users,
@@ -25,6 +27,7 @@ import {
   BarChart3,
   Bell,
   ScrollText,
+  Menu,
   Package as PackageIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
