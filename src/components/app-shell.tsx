@@ -153,72 +153,104 @@ function NotificationBell() {
   );
 }
 
-export function AppShell({ children }: { children: ReactNode }) {
+function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   const { user, organizations, currentOrgId, roles, setCurrentOrg, signOut } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const currentOrg = organizations.find((o) => o.id === currentOrgId);
   const visibleNav = nav.filter((item) => canAccessPath(roles, item.to));
-  const allowed = canAccessPath(roles, location.pathname);
 
+  return (
+    <>
+      <div className="flex items-center justify-between border-b px-5 py-4">
+        <div>
+          <div className="text-base font-semibold tracking-tight">CaterFlow</div>
+          <div className="mt-1 text-xs text-muted-foreground">{currentOrg?.name ?? "No workspace"}</div>
+        </div>
+        <NotificationBell />
+      </div>
+      <nav className="flex-1 space-y-1 p-3">
+        {visibleNav.map((item) => {
+          const Icon = item.icon;
+          const active = item.exact
+            ? location.pathname === item.to
+            : location.pathname.startsWith(item.to);
+          return (
+            <Link
+              key={item.to}
+              to={item.to}
+              onClick={onNavigate}
+              className={cn(
+                "flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors",
+                active
+                  ? "bg-primary text-primary-foreground"
+                  : "text-foreground hover:bg-accent hover:text-accent-foreground",
+              )}
+            >
+              <Icon className="h-4 w-4" />
+              {item.label}
+            </Link>
+          );
+        })}
+      </nav>
+      <div className="space-y-2 border-t p-3">
+        {organizations.length > 1 && (
+          <Select value={currentOrgId ?? undefined} onValueChange={setCurrentOrg}>
+            <SelectTrigger><SelectValue placeholder="Workspace" /></SelectTrigger>
+            <SelectContent>
+              {organizations.map((o) => (
+                <SelectItem key={o.id} value={o.id}>
+                  <span className="inline-flex items-center gap-2"><Building2 className="h-3.5 w-3.5" />{o.name}</span>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
+        <div className="truncate px-2 text-xs text-muted-foreground">{user?.email}</div>
+        <Button variant="outline" size="sm" className="w-full" onClick={async () => { await signOut(); navigate({ to: "/login" }); }}>
+          <LogOut className="mr-2 h-4 w-4" /> Sign out
+        </Button>
+      </div>
+    </>
+  );
+}
+
+export function AppShell({ children }: { children: ReactNode }) {
+  const location = useLocation();
+  const isMobile = useIsMobile();
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const allowed = canAccessPath(useAuth().roles, location.pathname);
 
   return (
     <div className="flex min-h-screen bg-muted/20">
-      <aside className="flex w-60 flex-col border-r bg-card">
-        <div className="flex items-center justify-between border-b px-5 py-4">
-          <div>
-            <div className="text-base font-semibold tracking-tight">CaterFlow</div>
-            <div className="mt-1 text-xs text-muted-foreground">{currentOrg?.name ?? "No workspace"}</div>
-          </div>
-          <NotificationBell />
-        </div>
-        <nav className="flex-1 space-y-1 p-3">
-          {visibleNav.map((item) => {
-            const Icon = item.icon;
-            const active = item.exact
-              ? location.pathname === item.to
-              : location.pathname.startsWith(item.to);
-            return (
-              <Link
-                key={item.to}
-                to={item.to}
-                className={cn(
-                  "flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors",
-                  active
-                    ? "bg-primary text-primary-foreground"
-                    : "text-foreground hover:bg-accent hover:text-accent-foreground",
-                )}
-              >
-                <Icon className="h-4 w-4" />
-                {item.label}
-              </Link>
-            );
-          })}
-        </nav>
-        <div className="space-y-2 border-t p-3">
-          {organizations.length > 1 && (
-            <Select value={currentOrgId ?? undefined} onValueChange={setCurrentOrg}>
-              <SelectTrigger><SelectValue placeholder="Workspace" /></SelectTrigger>
-              <SelectContent>
-                {organizations.map((o) => (
-                  <SelectItem key={o.id} value={o.id}>
-                    <span className="inline-flex items-center gap-2"><Building2 className="h-3.5 w-3.5" />{o.name}</span>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
-          <div className="truncate px-2 text-xs text-muted-foreground">{user?.email}</div>
-          <Button variant="outline" size="sm" className="w-full" onClick={async () => { await signOut(); navigate({ to: "/login" }); }}>
-            <LogOut className="mr-2 h-4 w-4" /> Sign out
-          </Button>
-        </div>
+      <aside className="hidden w-60 shrink-0 flex-col border-r bg-card md:flex">
+        <SidebarContent />
       </aside>
-      <main className="flex-1 overflow-x-auto">
-        <div className="flex items-center justify-end border-b bg-card/50 px-6 py-2 md:px-8">
+      {isMobile && (
+        <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+          <SheetContent side="left" className="w-[260px] p-0 sm:w-[280px]">
+            <div className="flex h-full flex-col">
+              <SidebarContent onNavigate={() => setMobileOpen(false)} />
+            </div>
+          </SheetContent>
+        </Sheet>
+      )}
+      <main className="flex-1 min-w-0 overflow-x-auto">
+        <div className="flex items-center justify-between border-b bg-card/50 px-4 py-2 md:justify-end md:px-8">
+          <Sheet>
+            <SheetTrigger asChild>
+              <button
+                type="button"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground md:hidden"
+                aria-label="Open navigation menu"
+              >
+                <Menu className="h-5 w-5" />
+              </button>
+            </SheetTrigger>
+          </Sheet>
           <CommandPalette />
         </div>
-        <div className="mx-auto max-w-7xl p-6 md:p-8">
+        <div className="mx-auto max-w-7xl p-4 md:p-8">
           {allowed ? (
             children
           ) : (
