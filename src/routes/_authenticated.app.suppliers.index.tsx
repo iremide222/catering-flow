@@ -12,6 +12,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogT
 import { Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { TableState } from "@/components/data-states";
 
 export const Route = createFileRoute("/_authenticated/app/suppliers/")({
   head: () => ({ meta: [{ title: "Suppliers — CaterFlow" }] }),
@@ -24,7 +25,7 @@ function SuppliersList() {
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ name: "", contact_name: "", phone: "", email: "", address: "", notes: "" });
 
-  const { data: suppliers = [] } = useQuery({
+  const { data: suppliers = [], isLoading, isError, error, refetch } = useQuery({
     queryKey: ["suppliers", currentOrgId],
     enabled: !!currentOrgId,
     queryFn: async () => {
@@ -81,9 +82,16 @@ function SuppliersList() {
               <TableHead>Name</TableHead><TableHead>Contact</TableHead><TableHead>Phone</TableHead><TableHead>Email</TableHead><TableHead></TableHead>
             </TableRow></TableHeader>
             <TableBody>
-              {suppliers.length === 0 ? (
-                <TableRow><TableCell colSpan={5} className="py-10 text-center text-sm text-muted-foreground">No suppliers yet.</TableCell></TableRow>
-              ) : suppliers.map((s: any) => (
+              <TableState
+                colSpan={5}
+                isLoading={isLoading}
+                isError={isError}
+                error={error}
+                onRetry={() => refetch()}
+                isEmpty={suppliers.length === 0}
+                emptyMessage="No suppliers yet. Add a supplier to start raising purchase orders."
+              />
+              {!isLoading && !isError && suppliers.map((s: any) => (
                 <TableRow key={s.id}>
                   <TableCell className="font-medium">{s.name}</TableCell>
                   <TableCell className="text-muted-foreground">{s.contact_name ?? "—"}</TableCell>

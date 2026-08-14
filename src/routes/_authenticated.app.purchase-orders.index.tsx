@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Plus } from "lucide-react";
 import { formatCurrency, formatDate } from "@/lib/format";
+import { TableState } from "@/components/data-states";
 
 export const Route = createFileRoute("/_authenticated/app/purchase-orders/")({
   head: () => ({ meta: [{ title: "Purchase Orders — CaterFlow" }] }),
@@ -18,7 +19,7 @@ function PoList() {
   const { currentOrgId, organizations } = useAuth();
   const currency = organizations.find((o) => o.id === currentOrgId)?.currency ?? "USD";
 
-  const { data: pos = [] } = useQuery({
+  const { data: pos = [], isLoading, isError, error, refetch } = useQuery({
     queryKey: ["pos", currentOrgId],
     enabled: !!currentOrgId,
     queryFn: async () => {
@@ -46,9 +47,16 @@ function PoList() {
               <TableHead>Status</TableHead><TableHead>Expected</TableHead><TableHead className="text-right">Total</TableHead>
             </TableRow></TableHeader>
             <TableBody>
-              {pos.length === 0 ? (
-                <TableRow><TableCell colSpan={6} className="py-10 text-center text-sm text-muted-foreground">No purchase orders yet.</TableCell></TableRow>
-              ) : pos.map((p: any) => (
+              <TableState
+                colSpan={6}
+                isLoading={isLoading}
+                isError={isError}
+                error={error}
+                onRetry={() => refetch()}
+                isEmpty={pos.length === 0}
+                emptyMessage="No purchase orders yet. Create a PO to order from a supplier."
+              />
+              {!isLoading && !isError && pos.map((p: any) => (
                 <TableRow key={p.id}>
                   <TableCell>
                     <Link to="/app/purchase-orders/$id" params={{ id: p.id }} className="font-medium hover:underline">
