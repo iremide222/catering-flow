@@ -10,6 +10,7 @@ import { useState } from "react";
 import { Plus, Download } from "lucide-react";
 import { exportCsv } from "@/lib/export-csv";
 import { formatDate } from "@/lib/format";
+import { TableState } from "@/components/data-states";
 
 export const Route = createFileRoute("/_authenticated/app/customers/")({
   head: () => ({ meta: [{ title: "Customers — CaterFlow" }] }),
@@ -20,7 +21,7 @@ function CustomersList() {
   const { currentOrgId } = useAuth();
   const [q, setQ] = useState("");
 
-  const { data: customers = [] } = useQuery({
+  const { data: customers = [], isLoading, isError, error, refetch } = useQuery({
     queryKey: ["customers", currentOrgId],
     enabled: !!currentOrgId,
     queryFn: async () => {
@@ -80,9 +81,16 @@ function CustomersList() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filtered.length === 0 ? (
-                <TableRow><TableCell colSpan={4} className="py-10 text-center text-sm text-muted-foreground">No customers yet.</TableCell></TableRow>
-              ) : filtered.map((c: any) => (
+              <TableState
+                colSpan={4}
+                isLoading={isLoading}
+                isError={isError}
+                error={error}
+                onRetry={() => refetch()}
+                isEmpty={filtered.length === 0}
+                emptyMessage={customers.length === 0 ? "No customers yet. Create your first customer to get started." : "No customers match your search."}
+              />
+              {!isLoading && !isError && filtered.map((c: any) => (
                 <TableRow key={c.id} className="cursor-pointer">
                   <TableCell>
                     <Link to="/app/customers/$id" params={{ id: c.id }} className="font-medium hover:underline">{c.name}</Link>
