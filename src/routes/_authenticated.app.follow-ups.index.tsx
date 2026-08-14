@@ -10,6 +10,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { formatDate } from "@/lib/format";
+import { QueryState } from "@/components/data-states";
 
 export const Route = createFileRoute("/_authenticated/app/follow-ups/")({
   head: () => ({ meta: [{ title: "Follow-ups — CaterFlow" }] }),
@@ -20,7 +21,7 @@ function FollowUps() {
   const { currentOrgId, user } = useAuth();
   const qc = useQueryClient();
 
-  const { data: items = [] } = useQuery({
+  const { data: items = [], isLoading, isError, error, refetch } = useQuery({
     queryKey: ["follow-ups", currentOrgId],
     enabled: !!currentOrgId,
     queryFn: async () => {
@@ -87,9 +88,15 @@ function FollowUps() {
 
       <Card>
         <CardContent className="divide-y p-0">
-          {items.length === 0 ? (
-            <div className="py-10 text-center text-sm text-muted-foreground">No follow-ups.</div>
-          ) : items.map((it: any) => (
+          <QueryState
+            isLoading={isLoading}
+            isError={isError}
+            error={error}
+            onRetry={() => refetch()}
+            isEmpty={items.length === 0}
+            emptyMessage="No follow-ups yet. Add one above to keep track of customer touchpoints."
+          />
+          {!isLoading && !isError && items.map((it: any) => (
             <div key={it.id} className={`flex items-center gap-3 p-4 ${it.done ? "opacity-50" : ""}`}>
               <Checkbox checked={it.done} onCheckedChange={(v) => toggle(it.id, !!v)} />
               <div className="flex-1">

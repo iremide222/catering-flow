@@ -9,6 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Plus, Download } from "lucide-react";
 import { formatCurrency, formatDate } from "@/lib/format";
 import { exportCsv } from "@/lib/export-csv";
+import { TableState } from "@/components/data-states";
 
 export const Route = createFileRoute("/_authenticated/app/invoices/")({
   head: () => ({ meta: [{ title: "Invoices — CaterFlow" }] }),
@@ -27,7 +28,7 @@ function InvoicesList() {
   const { currentOrgId, organizations } = useAuth();
   const currency = organizations.find((o) => o.id === currentOrgId)?.currency ?? "USD";
 
-  const { data: invoices = [] } = useQuery({
+  const { data: invoices = [], isLoading, isError, error, refetch } = useQuery({
     queryKey: ["invoices", currentOrgId],
     enabled: !!currentOrgId,
     queryFn: async () => {
@@ -91,9 +92,16 @@ function InvoicesList() {
               <TableHead className="text-right">Total</TableHead><TableHead className="text-right">Balance</TableHead>
             </TableRow></TableHeader>
             <TableBody>
-              {invoices.length === 0 ? (
-                <TableRow><TableCell colSpan={7} className="py-10 text-center text-sm text-muted-foreground">No invoices yet.</TableCell></TableRow>
-              ) : invoices.map((inv: any) => {
+              <TableState
+                colSpan={7}
+                isLoading={isLoading}
+                isError={isError}
+                error={error}
+                onRetry={() => refetch()}
+                isEmpty={invoices.length === 0}
+                emptyMessage="No invoices yet. Create an invoice to start billing."
+              />
+              {!isLoading && !isError && invoices.map((inv: any) => {
                 const bal = Number(inv.total) - Number(inv.amount_paid);
                 return (
                   <TableRow key={inv.id} className="cursor-pointer">

@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import { Plus } from "lucide-react";
 import { formatCurrency } from "@/lib/format";
+import { TableState } from "@/components/data-states";
 
 export const Route = createFileRoute("/_authenticated/app/inventory/")({
   head: () => ({ meta: [{ title: "Inventory — CaterFlow" }] }),
@@ -21,7 +22,7 @@ function InventoryList() {
   const currency = organizations.find((o) => o.id === currentOrgId)?.currency ?? "USD";
   const [q, setQ] = useState("");
 
-  const { data: items = [] } = useQuery({
+  const { data: items = [], isLoading, isError, error, refetch } = useQuery({
     queryKey: ["items", currentOrgId],
     enabled: !!currentOrgId,
     queryFn: async () => {
@@ -80,9 +81,16 @@ function InventoryList() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filtered.length === 0 ? (
-                <TableRow><TableCell colSpan={6} className="py-10 text-center text-sm text-muted-foreground">No items yet.</TableCell></TableRow>
-              ) : filtered.map((i: any) => {
+              <TableState
+                colSpan={6}
+                isLoading={isLoading}
+                isError={isError}
+                error={error}
+                onRetry={() => refetch()}
+                isEmpty={filtered.length === 0}
+                emptyMessage={items.length === 0 ? "No inventory items yet. Add an item to start tracking stock." : "No items match your search."}
+              />
+              {!isLoading && !isError && filtered.map((i: any) => {
                 const onHand = totals[i.id] ?? 0;
                 const low = i.reorder_level > 0 && onHand <= Number(i.reorder_level);
                 return (

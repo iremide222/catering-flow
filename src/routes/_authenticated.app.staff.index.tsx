@@ -14,6 +14,7 @@ import { Plus, Trash2, CalendarDays } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { formatDate } from "@/lib/format";
+import { TableState } from "@/components/data-states";
 
 export const Route = createFileRoute("/_authenticated/app/staff/")({
   head: () => ({ meta: [{ title: "Staff — CaterFlow" }] }),
@@ -28,7 +29,7 @@ function StaffList() {
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState(empty);
 
-  const { data: staff = [] } = useQuery({
+  const { data: staff = [], isLoading, isError, error, refetch } = useQuery({
     queryKey: ["staff", currentOrgId],
     enabled: !!currentOrgId,
     queryFn: async () => {
@@ -131,9 +132,16 @@ function StaffList() {
               <TableHead className="text-right">Rate</TableHead><TableHead>Status</TableHead><TableHead></TableHead>
             </TableRow></TableHeader>
             <TableBody>
-              {staff.length === 0 ? (
-                <TableRow><TableCell colSpan={6} className="py-10 text-center text-sm text-muted-foreground">No staff yet.</TableCell></TableRow>
-              ) : staff.map((s: any) => {
+              <TableState
+                colSpan={6}
+                isLoading={isLoading}
+                isError={isError}
+                error={error}
+                onRetry={() => refetch()}
+                isEmpty={staff.length === 0}
+                emptyMessage="No staff yet. Add team members to assign them to events."
+              />
+              {!isLoading && !isError && staff.map((s: any) => {
                 const up = upcomingByStaff.get(s.id) ?? [];
                 return (
                 <TableRow key={s.id}>

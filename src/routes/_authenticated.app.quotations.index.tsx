@@ -13,6 +13,7 @@ import { generateQuotationPdf } from "@/lib/pdf.functions";
 import { downloadBase64Pdf } from "@/lib/download-pdf";
 import { useState } from "react";
 import { toast } from "sonner";
+import { TableState } from "@/components/data-states";
 
 export const Route = createFileRoute("/_authenticated/app/quotations/")({
   head: () => ({ meta: [{ title: "Quotations — CaterFlow" }] }),
@@ -23,7 +24,7 @@ function QuotationsList() {
   const { currentOrgId, organizations } = useAuth();
   const currency = organizations.find((o) => o.id === currentOrgId)?.currency ?? "USD";
 
-  const { data: quotes = [] } = useQuery({
+  const { data: quotes = [], isLoading, isError, error, refetch } = useQuery({
     queryKey: ["quotations", currentOrgId],
     enabled: !!currentOrgId,
     queryFn: async () => {
@@ -55,9 +56,16 @@ function QuotationsList() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {quotes.length === 0 ? (
-                <TableRow><TableCell colSpan={7} className="py-10 text-center text-sm text-muted-foreground">No quotations yet.</TableCell></TableRow>
-              ) : quotes.map((q: any) => (
+              <TableState
+                colSpan={7}
+                isLoading={isLoading}
+                isError={isError}
+                error={error}
+                onRetry={() => refetch()}
+                isEmpty={quotes.length === 0}
+                emptyMessage="No quotations yet. Quotations appear here once created from an event."
+              />
+              {!isLoading && !isError && quotes.map((q: any) => (
                 <TableRow key={q.id}>
                   <TableCell><Link to="/app/events/$id" params={{ id: q.events.id }} className="font-medium hover:underline">{q.events.title}</Link></TableCell>
                   <TableCell className="text-muted-foreground">{q.events.customers?.name ?? "—"}</TableCell>

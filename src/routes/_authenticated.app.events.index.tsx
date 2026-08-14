@@ -12,6 +12,7 @@ import { formatCurrency, formatDate } from "@/lib/format";
 import { Plus, Download, Search } from "lucide-react";
 import { exportCsv } from "@/lib/export-csv";
 import { useMemo, useState } from "react";
+import { TableState } from "@/components/data-states";
 
 export const Route = createFileRoute("/_authenticated/app/events/")({
   head: () => ({ meta: [{ title: "Events — CaterFlow" }] }),
@@ -38,7 +39,7 @@ function EventsList() {
   const [status, setStatus] = useState<string>("all");
   const [range, setRange] = useState<string>("all"); // all | upcoming | past | 30d
 
-  const { data: events = [] } = useQuery({
+  const { data: events = [], isLoading, isError, error, refetch } = useQuery({
     queryKey: ["events", currentOrgId],
     enabled: !!currentOrgId,
     queryFn: async () => {
@@ -143,11 +144,16 @@ function EventsList() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filtered.length === 0 ? (
-                <TableRow><TableCell colSpan={5} className="py-10 text-center text-sm text-muted-foreground">
-                  {events.length === 0 ? "No events yet." : "No events match these filters."}
-                </TableCell></TableRow>
-              ) : filtered.map((e: any) => (
+              <TableState
+                colSpan={5}
+                isLoading={isLoading}
+                isError={isError}
+                error={error}
+                onRetry={() => refetch()}
+                isEmpty={filtered.length === 0}
+                emptyMessage={events.length === 0 ? "No events yet. Create your first event to get started." : "No events match these filters."}
+              />
+              {!isLoading && !isError && filtered.map((e: any) => (
                 <TableRow key={e.id}>
                   <TableCell><Link to="/app/events/$id" params={{ id: e.id }} className="font-medium hover:underline">{e.title}</Link><div className="text-xs text-muted-foreground">{e.venue ?? "—"}</div></TableCell>
                   <TableCell className="text-muted-foreground">{e.customers?.name ?? "—"}</TableCell>
