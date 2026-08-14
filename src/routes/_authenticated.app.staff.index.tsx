@@ -14,7 +14,7 @@ import { Plus, Trash2, CalendarDays } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { formatDate } from "@/lib/format";
-import { TableState, QueryState } from "@/components/data-states";
+import { TableState } from "@/components/data-states";
 
 export const Route = createFileRoute("/_authenticated/app/staff/")({
   head: () => ({ meta: [{ title: "Staff — CaterFlow" }] }),
