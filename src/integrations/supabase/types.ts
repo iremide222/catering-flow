@@ -271,6 +271,127 @@ export type Database = {
           },
         ]
       }
+      expense_categories: {
+        Row: {
+          color: string | null
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          organization_id: string
+          updated_at: string
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          organization_id: string
+          updated_at?: string
+        }
+        Update: {
+          color?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          organization_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "expense_categories_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      expenses: {
+        Row: {
+          amount: number
+          category_id: string | null
+          created_at: string
+          created_by: string | null
+          description: string
+          event_id: string | null
+          expense_date: string
+          id: string
+          notes: string | null
+          organization_id: string
+          payment_method: string | null
+          receipt_url: string | null
+          reference: string | null
+          supplier_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount?: number
+          category_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          description: string
+          event_id?: string | null
+          expense_date: string
+          id?: string
+          notes?: string | null
+          organization_id: string
+          payment_method?: string | null
+          receipt_url?: string | null
+          reference?: string | null
+          supplier_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          category_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          event_id?: string | null
+          expense_date?: string
+          id?: string
+          notes?: string | null
+          organization_id?: string
+          payment_method?: string | null
+          receipt_url?: string | null
+          reference?: string | null
+          supplier_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "expenses_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "expense_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expenses_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expenses_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expenses_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       follow_ups: {
         Row: {
           assigned_to: string | null

@@ -39,6 +39,7 @@ const QUICK_NAV = [
   { label: "Calendar", to: "/app/calendar", icon: CalendarDays },
   { label: "Quotations", to: "/app/quotations", icon: FileText },
   { label: "Invoices", to: "/app/invoices", icon: Receipt },
+  { label: "Expenses", to: "/app/expenses", icon: Receipt },
   { label: "Tasks", to: "/app/tasks", icon: CheckSquare },
   { label: "Staff", to: "/app/staff", icon: UserCog },
   { label: "Inventory", to: "/app/inventory", icon: Package },
@@ -51,6 +52,7 @@ const QUICK_CREATE = [
   { label: "New customer", to: "/app/customers/new", icon: Users },
   { label: "New event", to: "/app/events/new", icon: CalendarDays },
   { label: "New invoice", to: "/app/invoices/new", icon: Receipt },
+  { label: "New expense", to: "/app/expenses/new", icon: Receipt },
   { label: "New purchase order", to: "/app/purchase-orders/new", icon: ClipboardList },
 ];
 

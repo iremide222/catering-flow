@@ -49,6 +49,7 @@ const nav = [
   { to: "/app/calendar", label: "Calendar", icon: CalendarDays },
   { to: "/app/quotations", label: "Quotations", icon: FileText },
   { to: "/app/invoices", label: "Invoices", icon: Receipt },
+  { to: "/app/expenses", label: "Expenses", icon: Receipt },
   { to: "/app/tasks", label: "Tasks", icon: CheckSquare },
   { to: "/app/follow-ups", label: "Follow-ups", icon: ListChecks },
   { to: "/app/staff", label: "Staff", icon: UserCog },
