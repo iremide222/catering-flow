@@ -47,14 +47,16 @@ function EventDetail() {
   const { data } = useQuery({
     queryKey: ["event", id],
     queryFn: async () => {
-      const [{ data: event }, { data: items }, { data: quotes }, { data: assigns }, { data: tasks }] = await Promise.all([
+      const [{ data: event }, { data: items }, { data: quotes }, { data: assigns }, { data: tasks }, { data: expenses }, { data: pos }] = await Promise.all([
         supabase.from("events").select("*, customers(id,name,email,phone)").eq("id", id).maybeSingle(),
         supabase.from("event_items").select("*").eq("event_id", id).order("created_at"),
         supabase.from("quotations").select("*").eq("event_id", id).order("version", { ascending: false }),
         supabase.from("event_staff_assignments").select("*, staff_members(id,name,role_title)").eq("event_id", id),
         supabase.from("tasks").select("*, staff_members:assigned_to_staff_id(name)").eq("event_id", id).order("created_at", { ascending: false }),
+        supabase.from("expenses").select("id,description,amount,expense_date").eq("event_id", id).order("expense_date", { ascending: false }),
+        supabase.from("purchase_orders").select("id,order_number,total,status,created_at").eq("event_id", id).order("created_at", { ascending: false }),
       ]);
-      return { event, items: items ?? [], quotes: quotes ?? [], assigns: assigns ?? [], tasks: tasks ?? [] };
+      return { event, items: items ?? [], quotes: quotes ?? [], assigns: assigns ?? [], tasks: tasks ?? [], expenses: expenses ?? [], pos: pos ?? [] };
     },
   });
 
