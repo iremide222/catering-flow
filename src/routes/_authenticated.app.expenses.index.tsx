@@ -18,7 +18,7 @@ export const Route = createFileRoute("/_authenticated/app/expenses/")({
   component: ExpensesList,
 });
 
-export default function ExpensesList() {
+function ExpensesList() {
   const { currentOrgId, organizations } = useAuth();
   const currency = organizations.find((o) => o.id === currentOrgId)?.currency ?? "USD";
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
