@@ -179,6 +179,59 @@ function LocationsCard({ orgId, canEdit }: { orgId: string; canEdit: boolean }) 
   );
 }
 
+function ExpenseCategoriesCard({ orgId, canEdit }: { orgId: string; canEdit: boolean }) {
+  const qc = useQueryClient();
+  const [name, setName] = useState("");
+  const [color, setColor] = useState("#3b82f6");
+  const { data: categories = [] } = useQuery({
+    queryKey: ["expense-categories", orgId],
+    queryFn: async () => {
+      const { data } = await supabase.from("expense_categories").select("*").eq("organization_id", orgId).eq("is_active", true).order("name");
+      return data ?? [];
+    },
+  });
+  const add = async () => {
+    if (!name) return;
+    const { error } = await supabase.from("expense_categories").insert({ organization_id: orgId, name, color });
+    if (error) return toast.error(error.message);
+    setName("");
+    setColor("#3b82f6");
+    qc.invalidateQueries({ queryKey: ["expense-categories", orgId] });
+  };
+  const remove = async (id: string) => {
+    const { error } = await supabase.from("expense_categories").update({ is_active: false }).eq("id", id);
+    if (error) return toast.error(error.message);
+    qc.invalidateQueries({ queryKey: ["expense-categories", orgId] });
+  };
+  return (
+    <Card>
+      <CardHeader><CardTitle>Expense categories</CardTitle><CardDescription>Group costs for reporting and P&L.</CardDescription></CardHeader>
+      <CardContent className="space-y-4">
+        <Table>
+          <TableHeader><TableRow><TableHead>Name</TableHead><TableHead>Color</TableHead><TableHead></TableHead></TableRow></TableHeader>
+          <TableBody>
+            {categories.length === 0 ? (
+              <TableRow><TableCell colSpan={3} className="py-4 text-center text-sm text-muted-foreground">No categories yet.</TableCell></TableRow>
+            ) : categories.map((c: any) => (
+              <TableRow key={c.id}>
+                <TableCell className="font-medium">{c.name}</TableCell>
+                <TableCell><span className="inline-block h-4 w-4 rounded-full" style={{ backgroundColor: c.color ?? "#94a3b8" }} /></TableCell>
+                <TableCell>{canEdit && <Button variant="ghost" size="sm" onClick={() => remove(c.id)}>Remove</Button>}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+        {canEdit && (
+          <div className="grid grid-cols-12 gap-2 border-t pt-4">
+            <Input className="col-span-5" placeholder="Category name" value={name} onChange={(e) => setName(e.target.value)} />
+            <Input className="col-span-3" type="color" value={color} onChange={(e) => setColor(e.target.value)} />
+            <Button className="col-span-4" onClick={add} disabled={!name}>Add category</Button>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
 
 function InviteCard({ orgId, onChange }: { orgId: string; onChange: () => void }) {
   const [userId, setUserId] = useState("");
