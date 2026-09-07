@@ -93,7 +93,7 @@ export default function NewExpense() {
         category_id: categoryId !== "none" ? categoryId : null,
         event_id: eventId !== "none" ? eventId : null,
         supplier_id: supplierId !== "none" ? supplierId : null,
-        payment_method: paymentMethod || null,
+        payment_method: paymentMethod !== "none" ? paymentMethod : null,
         reference: reference.trim() || null,
         notes: notes.trim() || null,
       })
