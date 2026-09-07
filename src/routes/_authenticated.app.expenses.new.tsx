@@ -33,7 +33,7 @@ export default function NewExpense() {
   const [categoryId, setCategoryId] = useState("none");
   const [eventId, setEventId] = useState(search.event ?? "none");
   const [supplierId, setSupplierId] = useState("none");
-  const [paymentMethod, setPaymentMethod] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("none");
   const [reference, setReference] = useState("");
   const [notes, setNotes] = useState("");
   const [saving, setSaving] = useState(false);
