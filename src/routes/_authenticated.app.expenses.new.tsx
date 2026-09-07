@@ -188,7 +188,7 @@ export default function NewExpense() {
                 <SelectValue placeholder="Select method" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">None</SelectItem>
+                <SelectItem value="none">None</SelectItem>
                 {PAYMENT_METHODS.map((m) => (
                   <SelectItem key={m} value={m}>
                     {m}
