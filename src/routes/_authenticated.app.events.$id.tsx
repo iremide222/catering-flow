@@ -345,6 +345,67 @@ function EventDetail() {
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle>Profit & Loss</CardTitle>
+          <Button size="sm" variant="outline" asChild>
+            <Link to="/app/expenses/new" search={{ event: id }}>+ Expense</Link>
+          </Button>
+        </CardHeader>
+        <CardContent>
+          {(() => {
+            const revenue = Number(e.total_amount ?? 0);
+            const expenseTotal = (data?.expenses ?? []).reduce((s: number, x: any) => s + Number(x.amount ?? 0), 0);
+            const poTotal = (data?.pos ?? []).reduce((s: number, x: any) => s + Number(x.total ?? 0), 0);
+            const costs = expenseTotal + poTotal;
+            const profit = revenue - costs;
+            return (
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+                  <div className="rounded-md border p-3">
+                    <div className="text-xs text-muted-foreground">Revenue</div>
+                    <div className="text-lg font-semibold">{formatCurrency(revenue, currency)}</div>
+                  </div>
+                  <div className="rounded-md border p-3">
+                    <div className="text-xs text-muted-foreground">Expenses</div>
+                    <div className="text-lg font-semibold">{formatCurrency(expenseTotal, currency)}</div>
+                  </div>
+                  <div className="rounded-md border p-3">
+                    <div className="text-xs text-muted-foreground">Purchase orders</div>
+                    <div className="text-lg font-semibold">{formatCurrency(poTotal, currency)}</div>
+                  </div>
+                  <div className="rounded-md border p-3">
+                    <div className="text-xs text-muted-foreground">Profit / Loss</div>
+                    <div className={`text-lg font-semibold ${profit >= 0 ? "text-emerald-600" : "text-destructive"}`}>{formatCurrency(profit, currency)}</div>
+                  </div>
+                </div>
+                {(data?.expenses ?? []).length === 0 && (data?.pos ?? []).length === 0 ? (
+                  <div className="py-3 text-sm text-muted-foreground">No costs recorded yet.</div>
+                ) : (
+                  <Table>
+                    <TableHeader><TableRow><TableHead>Cost item</TableHead><TableHead className="text-right">Amount</TableHead></TableRow></TableHeader>
+                    <TableBody>
+                      {(data?.expenses ?? []).map((x: any) => (
+                        <TableRow key={`e-${x.id}`}>
+                          <TableCell><span className="text-muted-foreground">Expense</span> · {x.description}</TableCell>
+                          <TableCell className="text-right tabular-nums">{formatCurrency(Number(x.amount), currency)}</TableCell>
+                        </TableRow>
+                      ))}
+                      {(data?.pos ?? []).map((x: any) => (
+                        <TableRow key={`p-${x.id}`}>
+                          <TableCell><span className="text-muted-foreground">PO</span> · {x.order_number ?? "Purchase order"}</TableCell>
+                          <TableCell className="text-right tabular-nums">{formatCurrency(Number(x.total), currency)}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
+              </div>
+            );
+          })()}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Quotations</CardTitle>
           <Button size="sm" onClick={createQuotation}>New quotation from items</Button>
         </CardHeader>
