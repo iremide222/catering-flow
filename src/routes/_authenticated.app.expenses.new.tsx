@@ -21,7 +21,7 @@ export const Route = createFileRoute("/_authenticated/app/expenses/new")({
 
 const PAYMENT_METHODS = ["Cash", "Bank transfer", "Card", "Mobile money", "Check", "Other"];
 
-export default function NewExpense() {
+function NewExpense() {
   const { currentOrgId, user } = useAuth();
   const navigate = useNavigate();
   const search = Route.useSearch();
