@@ -21,7 +21,7 @@ export const Route = createFileRoute("/_authenticated/app/expenses/new")({
 
 const PAYMENT_METHODS = ["Cash", "Bank transfer", "Card", "Mobile money", "Check", "Other"];
 
-export default function NewExpense() {
+function NewExpense() {
   const { currentOrgId, user } = useAuth();
   const navigate = useNavigate();
   const search = Route.useSearch();
@@ -33,7 +33,7 @@ export default function NewExpense() {
   const [categoryId, setCategoryId] = useState("none");
   const [eventId, setEventId] = useState(search.event ?? "none");
   const [supplierId, setSupplierId] = useState("none");
-  const [paymentMethod, setPaymentMethod] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("none");
   const [reference, setReference] = useState("");
   const [notes, setNotes] = useState("");
   const [saving, setSaving] = useState(false);
@@ -93,7 +93,7 @@ export default function NewExpense() {
         category_id: categoryId !== "none" ? categoryId : null,
         event_id: eventId !== "none" ? eventId : null,
         supplier_id: supplierId !== "none" ? supplierId : null,
-        payment_method: paymentMethod || null,
+        payment_method: paymentMethod !== "none" ? paymentMethod : null,
         reference: reference.trim() || null,
         notes: notes.trim() || null,
       })
@@ -188,7 +188,7 @@ export default function NewExpense() {
                 <SelectValue placeholder="Select method" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">None</SelectItem>
+                <SelectItem value="none">None</SelectItem>
                 {PAYMENT_METHODS.map((m) => (
                   <SelectItem key={m} value={m}>
                     {m}
