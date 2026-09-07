@@ -119,6 +119,8 @@ function Settings() {
 
       {isAdmin && <InviteCard orgId={currentOrgId!} onChange={() => qc.invalidateQueries({ queryKey: ["members", currentOrgId] })} />}
 
+      <ExpenseCategoriesCard orgId={currentOrgId!} canEdit={roles.includes("admin") || roles.includes("manager")} />
+
       <LocationsCard orgId={currentOrgId!} canEdit={roles.includes("admin") || roles.includes("manager")} />
     </div>
   );

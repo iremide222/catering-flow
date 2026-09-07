@@ -56,6 +56,11 @@ function Reports() {
         const b = bucket(p.created_at);
         if (b) b.spend += Number(p.total ?? 0);
       });
+      (expenses ?? []).forEach((x: any) => {
+        if (!x.expense_date) return;
+        const b = bucket(x.expense_date);
+        if (b) b.spend += Number(x.amount ?? 0);
+      });
 
       // AR aging
       const todayStr = today.toISOString().slice(0, 10);
