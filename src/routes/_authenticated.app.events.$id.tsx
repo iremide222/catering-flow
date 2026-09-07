@@ -47,14 +47,16 @@ function EventDetail() {
   const { data } = useQuery({
     queryKey: ["event", id],
     queryFn: async () => {
-      const [{ data: event }, { data: items }, { data: quotes }, { data: assigns }, { data: tasks }] = await Promise.all([
+      const [{ data: event }, { data: items }, { data: quotes }, { data: assigns }, { data: tasks }, { data: expenses }, { data: pos }] = await Promise.all([
         supabase.from("events").select("*, customers(id,name,email,phone)").eq("id", id).maybeSingle(),
         supabase.from("event_items").select("*").eq("event_id", id).order("created_at"),
         supabase.from("quotations").select("*").eq("event_id", id).order("version", { ascending: false }),
         supabase.from("event_staff_assignments").select("*, staff_members(id,name,role_title)").eq("event_id", id),
         supabase.from("tasks").select("*, staff_members:assigned_to_staff_id(name)").eq("event_id", id).order("created_at", { ascending: false }),
+        supabase.from("expenses").select("id,description,amount,expense_date").eq("event_id", id).order("expense_date", { ascending: false }),
+        supabase.from("purchase_orders").select("id,order_number,total,status,created_at").eq("event_id", id).order("created_at", { ascending: false }),
       ]);
-      return { event, items: items ?? [], quotes: quotes ?? [], assigns: assigns ?? [], tasks: tasks ?? [] };
+      return { event, items: items ?? [], quotes: quotes ?? [], assigns: assigns ?? [], tasks: tasks ?? [], expenses: expenses ?? [], pos: pos ?? [] };
     },
   });
 
@@ -338,6 +340,67 @@ function EventDetail() {
             <Input className="col-span-3" type="number" min={0} step={0.01} value={newItem.unit_price} onChange={(ev) => setNewItem({ ...newItem, unit_price: ev.target.value })} />
             <Button className="col-span-2" onClick={addItem}>Add</Button>
           </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle>Profit & Loss</CardTitle>
+          <Button size="sm" variant="outline" asChild>
+            <Link to="/app/expenses/new" search={{ event: id }}>+ Expense</Link>
+          </Button>
+        </CardHeader>
+        <CardContent>
+          {(() => {
+            const revenue = Number(e.total_amount ?? 0);
+            const expenseTotal = (data?.expenses ?? []).reduce((s: number, x: any) => s + Number(x.amount ?? 0), 0);
+            const poTotal = (data?.pos ?? []).reduce((s: number, x: any) => s + Number(x.total ?? 0), 0);
+            const costs = expenseTotal + poTotal;
+            const profit = revenue - costs;
+            return (
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+                  <div className="rounded-md border p-3">
+                    <div className="text-xs text-muted-foreground">Revenue</div>
+                    <div className="text-lg font-semibold">{formatCurrency(revenue, currency)}</div>
+                  </div>
+                  <div className="rounded-md border p-3">
+                    <div className="text-xs text-muted-foreground">Expenses</div>
+                    <div className="text-lg font-semibold">{formatCurrency(expenseTotal, currency)}</div>
+                  </div>
+                  <div className="rounded-md border p-3">
+                    <div className="text-xs text-muted-foreground">Purchase orders</div>
+                    <div className="text-lg font-semibold">{formatCurrency(poTotal, currency)}</div>
+                  </div>
+                  <div className="rounded-md border p-3">
+                    <div className="text-xs text-muted-foreground">Profit / Loss</div>
+                    <div className={`text-lg font-semibold ${profit >= 0 ? "text-emerald-600" : "text-destructive"}`}>{formatCurrency(profit, currency)}</div>
+                  </div>
+                </div>
+                {(data?.expenses ?? []).length === 0 && (data?.pos ?? []).length === 0 ? (
+                  <div className="py-3 text-sm text-muted-foreground">No costs recorded yet.</div>
+                ) : (
+                  <Table>
+                    <TableHeader><TableRow><TableHead>Cost item</TableHead><TableHead className="text-right">Amount</TableHead></TableRow></TableHeader>
+                    <TableBody>
+                      {(data?.expenses ?? []).map((x: any) => (
+                        <TableRow key={`e-${x.id}`}>
+                          <TableCell><span className="text-muted-foreground">Expense</span> · {x.description}</TableCell>
+                          <TableCell className="text-right tabular-nums">{formatCurrency(Number(x.amount), currency)}</TableCell>
+                        </TableRow>
+                      ))}
+                      {(data?.pos ?? []).map((x: any) => (
+                        <TableRow key={`p-${x.id}`}>
+                          <TableCell><span className="text-muted-foreground">PO</span> · {x.order_number ?? "Purchase order"}</TableCell>
+                          <TableCell className="text-right tabular-nums">{formatCurrency(Number(x.total), currency)}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
+              </div>
+            );
+          })()}
         </CardContent>
       </Card>
 

@@ -23,11 +23,12 @@ function Reports() {
       const today = new Date();
       const startOfWindow = new Date(today.getFullYear(), today.getMonth() - 5, 1).toISOString().slice(0, 10);
 
-      const [{ data: invoices }, { data: payments }, { data: events }, { data: pos }] = await Promise.all([
+      const [{ data: invoices }, { data: payments }, { data: events }, { data: pos }, { data: expenses }] = await Promise.all([
         supabase.from("invoices").select("id,total,amount_paid,status,issue_date,due_date,customer_id,customers(name)").eq("organization_id", orgId),
         supabase.from("payments").select("amount,payment_date").eq("organization_id", orgId).gte("payment_date", startOfWindow),
         supabase.from("events").select("id,total_amount,status,event_date").eq("organization_id", orgId).gte("event_date", startOfWindow),
         supabase.from("purchase_orders").select("total,status,created_at").eq("organization_id", orgId).gte("created_at", startOfWindow),
+        supabase.from("expenses").select("amount,expense_date").eq("organization_id", orgId).gte("expense_date", startOfWindow),
       ]);
 
       // Monthly buckets last 6 months
@@ -54,6 +55,11 @@ function Reports() {
         if (!p.created_at) return;
         const b = bucket(p.created_at);
         if (b) b.spend += Number(p.total ?? 0);
+      });
+      (expenses ?? []).forEach((x: any) => {
+        if (!x.expense_date) return;
+        const b = bucket(x.expense_date);
+        if (b) b.spend += Number(x.amount ?? 0);
       });
 
       // AR aging
