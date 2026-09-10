@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CalendarDays, Users, DollarSign, ArrowRight, Receipt, AlertTriangle, CheckSquare } from "lucide-react";
+import { CalendarDays, Users, DollarSign, ArrowRight, Receipt, AlertTriangle, CheckSquare, Wallet } from "lucide-react";
 import { useEffect } from "react";
 import { formatCurrency, formatDate } from "@/lib/format";
 
