@@ -14,6 +14,73 @@ export type Database = {
   }
   public: {
     Tables: {
+      attendance_records: {
+        Row: {
+          check_in: string | null
+          check_out: string | null
+          created_at: string
+          created_by: string | null
+          event_id: string | null
+          hours: number
+          id: string
+          notes: string | null
+          organization_id: string
+          staff_member_id: string
+          updated_at: string
+          work_date: string
+        }
+        Insert: {
+          check_in?: string | null
+          check_out?: string | null
+          created_at?: string
+          created_by?: string | null
+          event_id?: string | null
+          hours?: number
+          id?: string
+          notes?: string | null
+          organization_id: string
+          staff_member_id: string
+          updated_at?: string
+          work_date?: string
+        }
+        Update: {
+          check_in?: string | null
+          check_out?: string | null
+          created_at?: string
+          created_by?: string | null
+          event_id?: string | null
+          hours?: number
+          id?: string
+          notes?: string | null
+          organization_id?: string
+          staff_member_id?: string
+          updated_at?: string
+          work_date?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attendance_records_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "attendance_records_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "attendance_records_staff_member_id_fkey"
+            columns: ["staff_member_id"]
+            isOneToOne: false
+            referencedRelation: "staff_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_log: {
         Row: {
           action: string
@@ -835,6 +902,117 @@ export type Database = {
           },
         ]
       }
+      payroll_items: {
+        Row: {
+          adjustments: number
+          created_at: string
+          gross_amount: number
+          hourly_rate: number
+          hours: number
+          id: string
+          net_amount: number
+          notes: string | null
+          organization_id: string
+          payroll_run_id: string
+          staff_member_id: string
+        }
+        Insert: {
+          adjustments?: number
+          created_at?: string
+          gross_amount?: number
+          hourly_rate?: number
+          hours?: number
+          id?: string
+          net_amount?: number
+          notes?: string | null
+          organization_id: string
+          payroll_run_id: string
+          staff_member_id: string
+        }
+        Update: {
+          adjustments?: number
+          created_at?: string
+          gross_amount?: number
+          hourly_rate?: number
+          hours?: number
+          id?: string
+          net_amount?: number
+          notes?: string | null
+          organization_id?: string
+          payroll_run_id?: string
+          staff_member_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payroll_items_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payroll_items_payroll_run_id_fkey"
+            columns: ["payroll_run_id"]
+            isOneToOne: false
+            referencedRelation: "payroll_runs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payroll_items_staff_member_id_fkey"
+            columns: ["staff_member_id"]
+            isOneToOne: false
+            referencedRelation: "staff_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payroll_runs: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          notes: string | null
+          organization_id: string
+          period_end: string
+          period_start: string
+          status: Database["public"]["Enums"]["payroll_status"]
+          total_amount: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          notes?: string | null
+          organization_id: string
+          period_end: string
+          period_start: string
+          status?: Database["public"]["Enums"]["payroll_status"]
+          total_amount?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          notes?: string | null
+          organization_id?: string
+          period_end?: string
+          period_start?: string
+          status?: Database["public"]["Enums"]["payroll_status"]
+          total_amount?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payroll_runs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -1379,6 +1557,7 @@ export type Database = {
         | "closed"
         | "cancelled"
       invoice_status: "draft" | "sent" | "partial" | "paid" | "void"
+      payroll_status: "draft" | "approved" | "paid"
       po_status:
         | "draft"
         | "ordered"
@@ -1529,6 +1708,7 @@ export const Constants = {
         "cancelled",
       ],
       invoice_status: ["draft", "sent", "partial", "paid", "void"],
+      payroll_status: ["draft", "approved", "paid"],
       po_status: [
         "draft",
         "ordered",

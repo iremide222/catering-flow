@@ -25,6 +25,7 @@ import { Route as AuthenticatedAppSettingsIndexRouteImport } from './routes/_aut
 import { Route as AuthenticatedAppReportsIndexRouteImport } from './routes/_authenticated.app.reports.index'
 import { Route as AuthenticatedAppQuotationsIndexRouteImport } from './routes/_authenticated.app.quotations.index'
 import { Route as AuthenticatedAppPurchaseOrdersIndexRouteImport } from './routes/_authenticated.app.purchase-orders.index'
+import { Route as AuthenticatedAppPayrollIndexRouteImport } from './routes/_authenticated.app.payroll.index'
 import { Route as AuthenticatedAppNotificationsIndexRouteImport } from './routes/_authenticated.app.notifications.index'
 import { Route as AuthenticatedAppInvoicesIndexRouteImport } from './routes/_authenticated.app.invoices.index'
 import { Route as AuthenticatedAppInventoryIndexRouteImport } from './routes/_authenticated.app.inventory.index'
@@ -34,8 +35,10 @@ import { Route as AuthenticatedAppEventsIndexRouteImport } from './routes/_authe
 import { Route as AuthenticatedAppCustomersIndexRouteImport } from './routes/_authenticated.app.customers.index'
 import { Route as AuthenticatedAppCalendarIndexRouteImport } from './routes/_authenticated.app.calendar.index'
 import { Route as AuthenticatedAppAuditLogIndexRouteImport } from './routes/_authenticated.app.audit-log.index'
+import { Route as AuthenticatedAppAttendanceIndexRouteImport } from './routes/_authenticated.app.attendance.index'
 import { Route as AuthenticatedAppPurchaseOrdersNewRouteImport } from './routes/_authenticated.app.purchase-orders.new'
 import { Route as AuthenticatedAppPurchaseOrdersIdRouteImport } from './routes/_authenticated.app.purchase-orders.$id'
+import { Route as AuthenticatedAppPayrollIdRouteImport } from './routes/_authenticated.app.payroll.$id'
 import { Route as AuthenticatedAppInvoicesNewRouteImport } from './routes/_authenticated.app.invoices.new'
 import { Route as AuthenticatedAppInvoicesIdRouteImport } from './routes/_authenticated.app.invoices.$id'
 import { Route as AuthenticatedAppInventoryNewRouteImport } from './routes/_authenticated.app.inventory.new'
@@ -133,6 +136,12 @@ const AuthenticatedAppPurchaseOrdersIndexRoute =
     path: '/purchase-orders/',
     getParentRoute: () => AuthenticatedAppRoute,
   } as any)
+const AuthenticatedAppPayrollIndexRoute =
+  AuthenticatedAppPayrollIndexRouteImport.update({
+    id: '/payroll/',
+    path: '/payroll/',
+    getParentRoute: () => AuthenticatedAppRoute,
+  } as any)
 const AuthenticatedAppNotificationsIndexRoute =
   AuthenticatedAppNotificationsIndexRouteImport.update({
     id: '/notifications/',
@@ -187,6 +196,12 @@ const AuthenticatedAppAuditLogIndexRoute =
     path: '/audit-log/',
     getParentRoute: () => AuthenticatedAppRoute,
   } as any)
+const AuthenticatedAppAttendanceIndexRoute =
+  AuthenticatedAppAttendanceIndexRouteImport.update({
+    id: '/attendance/',
+    path: '/attendance/',
+    getParentRoute: () => AuthenticatedAppRoute,
+  } as any)
 const AuthenticatedAppPurchaseOrdersNewRoute =
   AuthenticatedAppPurchaseOrdersNewRouteImport.update({
     id: '/purchase-orders/new',
@@ -197,6 +212,12 @@ const AuthenticatedAppPurchaseOrdersIdRoute =
   AuthenticatedAppPurchaseOrdersIdRouteImport.update({
     id: '/purchase-orders/$id',
     path: '/purchase-orders/$id',
+    getParentRoute: () => AuthenticatedAppRoute,
+  } as any)
+const AuthenticatedAppPayrollIdRoute =
+  AuthenticatedAppPayrollIdRouteImport.update({
+    id: '/payroll/$id',
+    path: '/payroll/$id',
     getParentRoute: () => AuthenticatedAppRoute,
   } as any)
 const AuthenticatedAppInvoicesNewRoute =
@@ -272,8 +293,10 @@ export interface FileRoutesByFullPath {
   '/app/inventory/new': typeof AuthenticatedAppInventoryNewRoute
   '/app/invoices/$id': typeof AuthenticatedAppInvoicesIdRoute
   '/app/invoices/new': typeof AuthenticatedAppInvoicesNewRoute
+  '/app/payroll/$id': typeof AuthenticatedAppPayrollIdRoute
   '/app/purchase-orders/$id': typeof AuthenticatedAppPurchaseOrdersIdRoute
   '/app/purchase-orders/new': typeof AuthenticatedAppPurchaseOrdersNewRoute
+  '/app/attendance/': typeof AuthenticatedAppAttendanceIndexRoute
   '/app/audit-log/': typeof AuthenticatedAppAuditLogIndexRoute
   '/app/calendar/': typeof AuthenticatedAppCalendarIndexRoute
   '/app/customers/': typeof AuthenticatedAppCustomersIndexRoute
@@ -283,6 +306,7 @@ export interface FileRoutesByFullPath {
   '/app/inventory/': typeof AuthenticatedAppInventoryIndexRoute
   '/app/invoices/': typeof AuthenticatedAppInvoicesIndexRoute
   '/app/notifications/': typeof AuthenticatedAppNotificationsIndexRoute
+  '/app/payroll/': typeof AuthenticatedAppPayrollIndexRoute
   '/app/purchase-orders/': typeof AuthenticatedAppPurchaseOrdersIndexRoute
   '/app/quotations/': typeof AuthenticatedAppQuotationsIndexRoute
   '/app/reports/': typeof AuthenticatedAppReportsIndexRoute
@@ -308,8 +332,10 @@ export interface FileRoutesByTo {
   '/app/inventory/new': typeof AuthenticatedAppInventoryNewRoute
   '/app/invoices/$id': typeof AuthenticatedAppInvoicesIdRoute
   '/app/invoices/new': typeof AuthenticatedAppInvoicesNewRoute
+  '/app/payroll/$id': typeof AuthenticatedAppPayrollIdRoute
   '/app/purchase-orders/$id': typeof AuthenticatedAppPurchaseOrdersIdRoute
   '/app/purchase-orders/new': typeof AuthenticatedAppPurchaseOrdersNewRoute
+  '/app/attendance': typeof AuthenticatedAppAttendanceIndexRoute
   '/app/audit-log': typeof AuthenticatedAppAuditLogIndexRoute
   '/app/calendar': typeof AuthenticatedAppCalendarIndexRoute
   '/app/customers': typeof AuthenticatedAppCustomersIndexRoute
@@ -319,6 +345,7 @@ export interface FileRoutesByTo {
   '/app/inventory': typeof AuthenticatedAppInventoryIndexRoute
   '/app/invoices': typeof AuthenticatedAppInvoicesIndexRoute
   '/app/notifications': typeof AuthenticatedAppNotificationsIndexRoute
+  '/app/payroll': typeof AuthenticatedAppPayrollIndexRoute
   '/app/purchase-orders': typeof AuthenticatedAppPurchaseOrdersIndexRoute
   '/app/quotations': typeof AuthenticatedAppQuotationsIndexRoute
   '/app/reports': typeof AuthenticatedAppReportsIndexRoute
@@ -347,8 +374,10 @@ export interface FileRoutesById {
   '/_authenticated/app/inventory/new': typeof AuthenticatedAppInventoryNewRoute
   '/_authenticated/app/invoices/$id': typeof AuthenticatedAppInvoicesIdRoute
   '/_authenticated/app/invoices/new': typeof AuthenticatedAppInvoicesNewRoute
+  '/_authenticated/app/payroll/$id': typeof AuthenticatedAppPayrollIdRoute
   '/_authenticated/app/purchase-orders/$id': typeof AuthenticatedAppPurchaseOrdersIdRoute
   '/_authenticated/app/purchase-orders/new': typeof AuthenticatedAppPurchaseOrdersNewRoute
+  '/_authenticated/app/attendance/': typeof AuthenticatedAppAttendanceIndexRoute
   '/_authenticated/app/audit-log/': typeof AuthenticatedAppAuditLogIndexRoute
   '/_authenticated/app/calendar/': typeof AuthenticatedAppCalendarIndexRoute
   '/_authenticated/app/customers/': typeof AuthenticatedAppCustomersIndexRoute
@@ -358,6 +387,7 @@ export interface FileRoutesById {
   '/_authenticated/app/inventory/': typeof AuthenticatedAppInventoryIndexRoute
   '/_authenticated/app/invoices/': typeof AuthenticatedAppInvoicesIndexRoute
   '/_authenticated/app/notifications/': typeof AuthenticatedAppNotificationsIndexRoute
+  '/_authenticated/app/payroll/': typeof AuthenticatedAppPayrollIndexRoute
   '/_authenticated/app/purchase-orders/': typeof AuthenticatedAppPurchaseOrdersIndexRoute
   '/_authenticated/app/quotations/': typeof AuthenticatedAppQuotationsIndexRoute
   '/_authenticated/app/reports/': typeof AuthenticatedAppReportsIndexRoute
@@ -386,8 +416,10 @@ export interface FileRouteTypes {
     | '/app/inventory/new'
     | '/app/invoices/$id'
     | '/app/invoices/new'
+    | '/app/payroll/$id'
     | '/app/purchase-orders/$id'
     | '/app/purchase-orders/new'
+    | '/app/attendance/'
     | '/app/audit-log/'
     | '/app/calendar/'
     | '/app/customers/'
@@ -397,6 +429,7 @@ export interface FileRouteTypes {
     | '/app/inventory/'
     | '/app/invoices/'
     | '/app/notifications/'
+    | '/app/payroll/'
     | '/app/purchase-orders/'
     | '/app/quotations/'
     | '/app/reports/'
@@ -422,8 +455,10 @@ export interface FileRouteTypes {
     | '/app/inventory/new'
     | '/app/invoices/$id'
     | '/app/invoices/new'
+    | '/app/payroll/$id'
     | '/app/purchase-orders/$id'
     | '/app/purchase-orders/new'
+    | '/app/attendance'
     | '/app/audit-log'
     | '/app/calendar'
     | '/app/customers'
@@ -433,6 +468,7 @@ export interface FileRouteTypes {
     | '/app/inventory'
     | '/app/invoices'
     | '/app/notifications'
+    | '/app/payroll'
     | '/app/purchase-orders'
     | '/app/quotations'
     | '/app/reports'
@@ -460,8 +496,10 @@ export interface FileRouteTypes {
     | '/_authenticated/app/inventory/new'
     | '/_authenticated/app/invoices/$id'
     | '/_authenticated/app/invoices/new'
+    | '/_authenticated/app/payroll/$id'
     | '/_authenticated/app/purchase-orders/$id'
     | '/_authenticated/app/purchase-orders/new'
+    | '/_authenticated/app/attendance/'
     | '/_authenticated/app/audit-log/'
     | '/_authenticated/app/calendar/'
     | '/_authenticated/app/customers/'
@@ -471,6 +509,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/inventory/'
     | '/_authenticated/app/invoices/'
     | '/_authenticated/app/notifications/'
+    | '/_authenticated/app/payroll/'
     | '/_authenticated/app/purchase-orders/'
     | '/_authenticated/app/quotations/'
     | '/_authenticated/app/reports/'
@@ -603,6 +642,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppPurchaseOrdersIndexRouteImport
       parentRoute: typeof AuthenticatedAppRoute
     }
+    '/_authenticated/app/payroll/': {
+      id: '/_authenticated/app/payroll/'
+      path: '/payroll'
+      fullPath: '/app/payroll/'
+      preLoaderRoute: typeof AuthenticatedAppPayrollIndexRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
     '/_authenticated/app/notifications/': {
       id: '/_authenticated/app/notifications/'
       path: '/notifications'
@@ -666,6 +712,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppAuditLogIndexRouteImport
       parentRoute: typeof AuthenticatedAppRoute
     }
+    '/_authenticated/app/attendance/': {
+      id: '/_authenticated/app/attendance/'
+      path: '/attendance'
+      fullPath: '/app/attendance/'
+      preLoaderRoute: typeof AuthenticatedAppAttendanceIndexRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
     '/_authenticated/app/purchase-orders/new': {
       id: '/_authenticated/app/purchase-orders/new'
       path: '/purchase-orders/new'
@@ -678,6 +731,13 @@ declare module '@tanstack/react-router' {
       path: '/purchase-orders/$id'
       fullPath: '/app/purchase-orders/$id'
       preLoaderRoute: typeof AuthenticatedAppPurchaseOrdersIdRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/app/payroll/$id': {
+      id: '/_authenticated/app/payroll/$id'
+      path: '/payroll/$id'
+      fullPath: '/app/payroll/$id'
+      preLoaderRoute: typeof AuthenticatedAppPayrollIdRouteImport
       parentRoute: typeof AuthenticatedAppRoute
     }
     '/_authenticated/app/invoices/new': {
@@ -758,8 +818,10 @@ interface AuthenticatedAppRouteChildren {
   AuthenticatedAppInventoryNewRoute: typeof AuthenticatedAppInventoryNewRoute
   AuthenticatedAppInvoicesIdRoute: typeof AuthenticatedAppInvoicesIdRoute
   AuthenticatedAppInvoicesNewRoute: typeof AuthenticatedAppInvoicesNewRoute
+  AuthenticatedAppPayrollIdRoute: typeof AuthenticatedAppPayrollIdRoute
   AuthenticatedAppPurchaseOrdersIdRoute: typeof AuthenticatedAppPurchaseOrdersIdRoute
   AuthenticatedAppPurchaseOrdersNewRoute: typeof AuthenticatedAppPurchaseOrdersNewRoute
+  AuthenticatedAppAttendanceIndexRoute: typeof AuthenticatedAppAttendanceIndexRoute
   AuthenticatedAppAuditLogIndexRoute: typeof AuthenticatedAppAuditLogIndexRoute
   AuthenticatedAppCalendarIndexRoute: typeof AuthenticatedAppCalendarIndexRoute
   AuthenticatedAppCustomersIndexRoute: typeof AuthenticatedAppCustomersIndexRoute
@@ -769,6 +831,7 @@ interface AuthenticatedAppRouteChildren {
   AuthenticatedAppInventoryIndexRoute: typeof AuthenticatedAppInventoryIndexRoute
   AuthenticatedAppInvoicesIndexRoute: typeof AuthenticatedAppInvoicesIndexRoute
   AuthenticatedAppNotificationsIndexRoute: typeof AuthenticatedAppNotificationsIndexRoute
+  AuthenticatedAppPayrollIndexRoute: typeof AuthenticatedAppPayrollIndexRoute
   AuthenticatedAppPurchaseOrdersIndexRoute: typeof AuthenticatedAppPurchaseOrdersIndexRoute
   AuthenticatedAppQuotationsIndexRoute: typeof AuthenticatedAppQuotationsIndexRoute
   AuthenticatedAppReportsIndexRoute: typeof AuthenticatedAppReportsIndexRoute
@@ -790,9 +853,11 @@ const AuthenticatedAppRouteChildren: AuthenticatedAppRouteChildren = {
   AuthenticatedAppInventoryNewRoute: AuthenticatedAppInventoryNewRoute,
   AuthenticatedAppInvoicesIdRoute: AuthenticatedAppInvoicesIdRoute,
   AuthenticatedAppInvoicesNewRoute: AuthenticatedAppInvoicesNewRoute,
+  AuthenticatedAppPayrollIdRoute: AuthenticatedAppPayrollIdRoute,
   AuthenticatedAppPurchaseOrdersIdRoute: AuthenticatedAppPurchaseOrdersIdRoute,
   AuthenticatedAppPurchaseOrdersNewRoute:
     AuthenticatedAppPurchaseOrdersNewRoute,
+  AuthenticatedAppAttendanceIndexRoute: AuthenticatedAppAttendanceIndexRoute,
   AuthenticatedAppAuditLogIndexRoute: AuthenticatedAppAuditLogIndexRoute,
   AuthenticatedAppCalendarIndexRoute: AuthenticatedAppCalendarIndexRoute,
   AuthenticatedAppCustomersIndexRoute: AuthenticatedAppCustomersIndexRoute,
@@ -803,6 +868,7 @@ const AuthenticatedAppRouteChildren: AuthenticatedAppRouteChildren = {
   AuthenticatedAppInvoicesIndexRoute: AuthenticatedAppInvoicesIndexRoute,
   AuthenticatedAppNotificationsIndexRoute:
     AuthenticatedAppNotificationsIndexRoute,
+  AuthenticatedAppPayrollIndexRoute: AuthenticatedAppPayrollIndexRoute,
   AuthenticatedAppPurchaseOrdersIndexRoute:
     AuthenticatedAppPurchaseOrdersIndexRoute,
   AuthenticatedAppQuotationsIndexRoute: AuthenticatedAppQuotationsIndexRoute,
