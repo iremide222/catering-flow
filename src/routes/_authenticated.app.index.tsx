@@ -42,6 +42,7 @@ function Dashboard() {
         { data: items },
         { data: stockLevels },
         { data: openTasks },
+        { data: expenses },
       ] = await Promise.all([
         supabase.from("customers").select("*", { count: "exact", head: true }).eq("organization_id", orgId),
         supabase.from("events").select("*", { count: "exact", head: true }).eq("organization_id", orgId),
@@ -50,6 +51,7 @@ function Dashboard() {
         supabase.from("items").select("id,name,unit,reorder_level").eq("organization_id", orgId).eq("is_active", true),
         supabase.from("stock_levels").select("item_id,quantity").eq("organization_id", orgId),
         supabase.from("tasks").select("id,title,status,priority,due_date").eq("organization_id", orgId).neq("status", "done").order("due_date", { ascending: true, nullsFirst: false }).limit(5),
+        supabase.from("expenses").select("amount,expense_date").eq("organization_id", orgId),
       ]);
 
       const onHandByItem = new Map<string, number>();
