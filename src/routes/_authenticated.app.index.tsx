@@ -105,8 +105,9 @@ function Dashboard() {
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-5">
         <StatCard icon={DollarSign} label="Revenue this month" value={stats ? formatCurrency(stats.revenueMTD, currency) : "—"} />
+        <StatCard icon={Wallet} label="Expenses this month" value={stats ? formatCurrency(stats.expensesMTD, currency) : "—"} />
         <StatCard icon={Receipt} label="Outstanding AR" value={stats ? formatCurrency(stats.outstanding, currency) : "—"} sub={stats?.overdueCount ? `${stats.overdueCount} overdue` : undefined} />
         <StatCard icon={CalendarDays} label="Upcoming events" value={stats?.upcoming.length ?? "—"} />
         <StatCard icon={Users} label="Customers" value={stats?.customers ?? "—"} />
