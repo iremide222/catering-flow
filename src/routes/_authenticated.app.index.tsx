@@ -71,6 +71,9 @@ function Dashboard() {
       const revenueMTD = (invoices ?? [])
         .filter((i: any) => i.issue_date >= monthStart && i.status !== "void")
         .reduce((s: number, i: any) => s + Number(i.total), 0);
+      const expensesMTD = (expenses ?? [])
+        .filter((e: any) => e.expense_date >= monthStart)
+        .reduce((s: number, e: any) => s + Number(e.amount), 0);
 
       return {
         customers: customers ?? 0,
@@ -80,6 +83,7 @@ function Dashboard() {
         overdue: overdue.slice(0, 5),
         overdueCount: overdue.length,
         revenueMTD,
+        expensesMTD,
         lowStock,
         openTasks: openTasks ?? [],
       };
