@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CalendarDays, Users, DollarSign, ArrowRight, Receipt, AlertTriangle, CheckSquare } from "lucide-react";
+import { CalendarDays, Users, DollarSign, ArrowRight, Receipt, AlertTriangle, CheckSquare, Wallet } from "lucide-react";
 import { useEffect } from "react";
 import { formatCurrency, formatDate } from "@/lib/format";
 
@@ -42,6 +42,7 @@ function Dashboard() {
         { data: items },
         { data: stockLevels },
         { data: openTasks },
+        { data: expenses },
       ] = await Promise.all([
         supabase.from("customers").select("*", { count: "exact", head: true }).eq("organization_id", orgId),
         supabase.from("events").select("*", { count: "exact", head: true }).eq("organization_id", orgId),
@@ -50,6 +51,7 @@ function Dashboard() {
         supabase.from("items").select("id,name,unit,reorder_level").eq("organization_id", orgId).eq("is_active", true),
         supabase.from("stock_levels").select("item_id,quantity").eq("organization_id", orgId),
         supabase.from("tasks").select("id,title,status,priority,due_date").eq("organization_id", orgId).neq("status", "done").order("due_date", { ascending: true, nullsFirst: false }).limit(5),
+        supabase.from("expenses").select("amount,expense_date").eq("organization_id", orgId),
       ]);
 
       const onHandByItem = new Map<string, number>();
@@ -69,6 +71,9 @@ function Dashboard() {
       const revenueMTD = (invoices ?? [])
         .filter((i: any) => i.issue_date >= monthStart && i.status !== "void")
         .reduce((s: number, i: any) => s + Number(i.total), 0);
+      const expensesMTD = (expenses ?? [])
+        .filter((e: any) => e.expense_date >= monthStart)
+        .reduce((s: number, e: any) => s + Number(e.amount), 0);
 
       return {
         customers: customers ?? 0,
@@ -78,6 +83,7 @@ function Dashboard() {
         overdue: overdue.slice(0, 5),
         overdueCount: overdue.length,
         revenueMTD,
+        expensesMTD,
         lowStock,
         openTasks: openTasks ?? [],
       };
@@ -99,8 +105,9 @@ function Dashboard() {
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-5">
         <StatCard icon={DollarSign} label="Revenue this month" value={stats ? formatCurrency(stats.revenueMTD, currency) : "—"} />
+        <StatCard icon={Wallet} label="Expenses this month" value={stats ? formatCurrency(stats.expensesMTD, currency) : "—"} />
         <StatCard icon={Receipt} label="Outstanding AR" value={stats ? formatCurrency(stats.outstanding, currency) : "—"} sub={stats?.overdueCount ? `${stats.overdueCount} overdue` : undefined} />
         <StatCard icon={CalendarDays} label="Upcoming events" value={stats?.upcoming.length ?? "—"} />
         <StatCard icon={Users} label="Customers" value={stats?.customers ?? "—"} />
