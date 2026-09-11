@@ -53,6 +53,8 @@ const nav = [
   { to: "/app/tasks", label: "Tasks", icon: CheckSquare },
   { to: "/app/follow-ups", label: "Follow-ups", icon: ListChecks },
   { to: "/app/staff", label: "Staff", icon: UserCog },
+  { to: "/app/attendance", label: "Attendance", icon: CalendarDays },
+  { to: "/app/payroll", label: "Payroll", icon: Receipt },
   { to: "/app/inventory", label: "Inventory", icon: Package },
   { to: "/app/suppliers", label: "Suppliers", icon: Truck },
   { to: "/app/purchase-orders", label: "Purchase orders", icon: ClipboardList },
