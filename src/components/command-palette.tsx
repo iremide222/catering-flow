@@ -29,6 +29,7 @@ import {
   Settings,
   FileText,
   Plus,
+  UtensilsCrossed,
 } from "lucide-react";
 
 const QUICK_NAV = [
