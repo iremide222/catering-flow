@@ -121,9 +121,20 @@ function MenuDetail() {
     navigate({ to: "/app/menus" });
   };
 
+  if (isLoading || isError || !dish) {
+    return (
+      <QueryState
+        isLoading={isLoading}
+        isError={isError}
+        error={error}
+        onRetry={() => refetch()}
+        isEmpty={!isLoading && !isError && !dish}
+        emptyMessage="Dish not found."
+      />
+    );
+  }
+
   return (
-    <QueryState isLoading={isLoading} isError={isError} error={error} onRetry={() => refetch()}>
-      {dish && (
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
