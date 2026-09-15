@@ -29,6 +29,7 @@ import {
   Settings,
   FileText,
   Plus,
+  UtensilsCrossed,
 } from "lucide-react";
 
 const QUICK_NAV = [
@@ -42,6 +43,7 @@ const QUICK_NAV = [
   { label: "Expenses", to: "/app/expenses", icon: Receipt },
   { label: "Tasks", to: "/app/tasks", icon: CheckSquare },
   { label: "Staff", to: "/app/staff", icon: UserCog },
+  { label: "Menus", to: "/app/menus", icon: UtensilsCrossed },
   { label: "Inventory", to: "/app/inventory", icon: Package },
   { label: "Suppliers", to: "/app/suppliers", icon: Truck },
   { label: "Purchase orders", to: "/app/purchase-orders", icon: ClipboardList },

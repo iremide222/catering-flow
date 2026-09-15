@@ -18,6 +18,7 @@ const ROUTE_ROLES: Array<{ prefix: string; roles: Role[] }> = [
   { prefix: "/app/staff", roles: ["admin", "manager"] },
   { prefix: "/app/attendance", roles: ["admin", "manager", "accountant"] },
   { prefix: "/app/payroll", roles: ["admin", "manager", "accountant"] },
+  { prefix: "/app/menus", roles: ["admin", "manager", "store_manager"] },
   { prefix: "/app/inventory", roles: ["admin", "manager", "store_manager"] },
   { prefix: "/app/suppliers", roles: ["admin", "manager", "store_manager"] },
   { prefix: "/app/purchase-orders", roles: ["admin", "manager", "store_manager"] },

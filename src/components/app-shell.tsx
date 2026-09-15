@@ -29,6 +29,7 @@ import {
   ScrollText,
   Menu,
   Package as PackageIcon,
+  UtensilsCrossed,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CommandPalette } from "@/components/command-palette";
@@ -55,6 +56,7 @@ const nav = [
   { to: "/app/staff", label: "Staff", icon: UserCog },
   { to: "/app/attendance", label: "Attendance", icon: CalendarDays },
   { to: "/app/payroll", label: "Payroll", icon: Receipt },
+  { to: "/app/menus", label: "Menus", icon: UtensilsCrossed },
   { to: "/app/inventory", label: "Inventory", icon: Package },
   { to: "/app/suppliers", label: "Suppliers", icon: Truck },
   { to: "/app/purchase-orders", label: "Purchase orders", icon: ClipboardList },
