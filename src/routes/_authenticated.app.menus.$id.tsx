@@ -235,7 +235,5 @@ function MenuDetail() {
             </CardContent>
           </Card>
         </div>
-      )}
-    </QueryState>
   );
 }
