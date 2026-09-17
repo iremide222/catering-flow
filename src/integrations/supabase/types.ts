@@ -213,6 +213,61 @@ export type Database = {
           },
         ]
       }
+      event_menus: {
+        Row: {
+          created_at: string
+          event_id: string
+          id: string
+          menu_item_id: string
+          notes: string | null
+          organization_id: string
+          servings: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          event_id: string
+          id?: string
+          menu_item_id: string
+          notes?: string | null
+          organization_id: string
+          servings?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          event_id?: string
+          id?: string
+          menu_item_id?: string
+          notes?: string | null
+          organization_id?: string
+          servings?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_menus_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_menus_menu_item_id_fkey"
+            columns: ["menu_item_id"]
+            isOneToOne: false
+            referencedRelation: "menu_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_menus_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       event_staff_assignments: {
         Row: {
           created_at: string
