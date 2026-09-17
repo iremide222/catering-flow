@@ -343,6 +343,8 @@ function EventDetail() {
         </CardContent>
       </Card>
 
+      <EventMenuPlanner eventId={id} />
+
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Profit & Loss</CardTitle>
