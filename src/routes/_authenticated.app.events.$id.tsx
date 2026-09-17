@@ -16,6 +16,7 @@ import { formatCurrency, formatDate } from "@/lib/format";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Trash2, Copy, FileText, Pencil } from "lucide-react";
+import { EventMenuPlanner } from "@/components/event-menu-planner";
 
 export const Route = createFileRoute("/_authenticated/app/events/$id")({
   head: () => ({ meta: [{ title: "Event — CaterFlow" }] }),
