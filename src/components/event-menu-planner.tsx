@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { formatCurrency } from "@/lib/format";
+import { formatCurrency, formatDate } from "@/lib/format";
 import { toast } from "sonner";
 import { Trash2 } from "lucide-react";
 
@@ -20,11 +20,14 @@ type Props = { eventId: string };
  * and get the total ingredient requirement checked against current stock.
  */
 export function EventMenuPlanner({ eventId }: Props) {
-  const { currentOrgId, organizations } = useAuth();
+  const { currentOrgId, organizations, roles } = useAuth();
   const qc = useQueryClient();
   const currency = organizations.find((o) => o.id === currentOrgId)?.currency ?? "USD";
   const [dishId, setDishId] = useState("");
   const [servings, setServings] = useState("1");
+  const [locationId, setLocationId] = useState("");
+  const [issuing, setIssuing] = useState(false);
+  const canIssue = roles.some((r) => ["admin", "manager", "store_manager"].includes(r));
 
   const { data: planned = [] } = useQuery({
     queryKey: ["event-menus", eventId],
@@ -80,6 +83,47 @@ export function EventMenuPlanner({ eventId }: Props) {
       return map;
     },
   });
+
+  const { data: locations = [] } = useQuery({
+    queryKey: ["locations", currentOrgId],
+    enabled: !!currentOrgId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("locations")
+        .select("id,name")
+        .eq("organization_id", currentOrgId!)
+        .order("name");
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const { data: issues = [] } = useQuery({
+    queryKey: ["event-ingredient-issues", eventId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("event_ingredient_issues")
+        .select("id, created_at, locations(name)")
+        .eq("event_id", eventId)
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const issueIngredients = async () => {
+    if (!locationId) return;
+    setIssuing(true);
+    const { data, error } = await supabase.rpc("issue_event_ingredients", {
+      _event_id: eventId,
+      _location_id: locationId,
+    });
+    setIssuing(false);
+    if (error) return toast.error(error.message);
+    toast.success(`Issued ${data} ingredient${Number(data) === 1 ? "" : "s"} from stock`);
+    qc.invalidateQueries({ queryKey: ["stock-by-item", currentOrgId] });
+    qc.invalidateQueries({ queryKey: ["event-ingredient-issues", eventId] });
+  };
 
   const addDish = async () => {
     if (!currentOrgId || !dishId) return;
@@ -259,6 +303,33 @@ export function EventMenuPlanner({ eventId }: Props) {
                 <Button variant="outline" size="sm" asChild>
                   <Link to="/app/purchase-orders/new">Create purchase order</Link>
                 </Button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {requiredRows.length > 0 && canIssue && (
+          <div className="space-y-2 border-t pt-4">
+            <div className="text-sm font-medium">Issue ingredients from stock</div>
+            <p className="text-xs text-muted-foreground">
+              Deducts the required quantities from a storage location and records stock movements against this event.
+            </p>
+            <div className="grid grid-cols-12 gap-2">
+              <Select value={locationId} onValueChange={setLocationId}>
+                <SelectTrigger className="col-span-8"><SelectValue placeholder="Pick a storage location" /></SelectTrigger>
+                <SelectContent>
+                  {(locations as any[]).map((l) => <SelectItem key={l.id} value={l.id}>{l.name}</SelectItem>)}
+                </SelectContent>
+              </Select>
+              <Button className="col-span-4" onClick={issueIngredients} disabled={!locationId || issuing}>
+                {issuing ? "Issuing…" : "Issue ingredients"}
+              </Button>
+            </div>
+            {issues.length > 0 && (
+              <div className="space-y-1 pt-1 text-xs text-muted-foreground">
+                {(issues as any[]).map((i) => (
+                  <div key={i.id}>Issued from {i.locations?.name ?? "location"} on {formatDate(i.created_at)}</div>
+                ))}
               </div>
             )}
           </div>

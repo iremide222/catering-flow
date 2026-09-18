@@ -175,6 +175,58 @@ export type Database = {
           },
         ]
       }
+      event_ingredient_issues: {
+        Row: {
+          created_at: string
+          event_id: string
+          id: string
+          issued_by: string | null
+          location_id: string
+          organization_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          event_id: string
+          id?: string
+          issued_by?: string | null
+          location_id: string
+          organization_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          event_id?: string
+          id?: string
+          issued_by?: string | null
+          location_id?: string
+          organization_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_ingredient_issues_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_ingredient_issues_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_ingredient_issues_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       event_items: {
         Row: {
           created_at: string
@@ -1676,6 +1728,10 @@ export type Database = {
       is_member: {
         Args: { _org_id: string; _user_id: string }
         Returns: boolean
+      }
+      issue_event_ingredients: {
+        Args: { _event_id: string; _location_id: string }
+        Returns: number
       }
       po_org: { Args: { _po_id: string }; Returns: string }
       receive_po_item: {
