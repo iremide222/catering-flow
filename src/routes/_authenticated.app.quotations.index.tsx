@@ -14,6 +14,7 @@ import { downloadBase64Pdf } from "@/lib/download-pdf";
 import { useState } from "react";
 import { toast } from "sonner";
 import { TableState } from "@/components/data-states";
+import { ConvertQuotationButton } from "@/components/convert-quotation-button";
 
 export const Route = createFileRoute("/_authenticated/app/quotations/")({
   head: () => ({ meta: [{ title: "Quotations — CaterFlow" }] }),
@@ -73,7 +74,7 @@ function QuotationsList() {
                   <TableCell><Badge variant="outline">{q.status}</Badge></TableCell>
                   <TableCell>{formatDate(q.created_at)}</TableCell>
                   <TableCell className="text-right">{formatCurrency(Number(q.total), currency)}</TableCell>
-                  <TableCell className="text-right"><QuotationPdfButton id={q.id} /></TableCell>
+                  <TableCell className="text-right"><div className="flex justify-end gap-1"><ConvertQuotationButton quotationId={q.id} eventId={q.events.id} /><QuotationPdfButton id={q.id} /></div></TableCell>
                 </TableRow>
               ))}
             </TableBody>
