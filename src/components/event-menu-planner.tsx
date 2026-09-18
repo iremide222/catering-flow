@@ -307,6 +307,33 @@ export function EventMenuPlanner({ eventId }: Props) {
             )}
           </div>
         )}
+
+        {requiredRows.length > 0 && canIssue && (
+          <div className="space-y-2 border-t pt-4">
+            <div className="text-sm font-medium">Issue ingredients from stock</div>
+            <p className="text-xs text-muted-foreground">
+              Deducts the required quantities from a storage location and records stock movements against this event.
+            </p>
+            <div className="grid grid-cols-12 gap-2">
+              <Select value={locationId} onValueChange={setLocationId}>
+                <SelectTrigger className="col-span-8"><SelectValue placeholder="Pick a storage location" /></SelectTrigger>
+                <SelectContent>
+                  {(locations as any[]).map((l) => <SelectItem key={l.id} value={l.id}>{l.name}</SelectItem>)}
+                </SelectContent>
+              </Select>
+              <Button className="col-span-4" onClick={issueIngredients} disabled={!locationId || issuing}>
+                {issuing ? "Issuing…" : "Issue ingredients"}
+              </Button>
+            </div>
+            {issues.length > 0 && (
+              <div className="space-y-1 pt-1 text-xs text-muted-foreground">
+                {(issues as any[]).map((i) => (
+                  <div key={i.id}>Issued from {i.locations?.name ?? "location"} on {formatDate(i.created_at)}</div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </CardContent>
     </Card>
   );
