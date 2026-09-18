@@ -20,11 +20,14 @@ type Props = { eventId: string };
  * and get the total ingredient requirement checked against current stock.
  */
 export function EventMenuPlanner({ eventId }: Props) {
-  const { currentOrgId, organizations } = useAuth();
+  const { currentOrgId, organizations, roles } = useAuth();
   const qc = useQueryClient();
   const currency = organizations.find((o) => o.id === currentOrgId)?.currency ?? "USD";
   const [dishId, setDishId] = useState("");
   const [servings, setServings] = useState("1");
+  const [locationId, setLocationId] = useState("");
+  const [issuing, setIssuing] = useState(false);
+  const canIssue = roles.some((r) => ["admin", "manager", "store_manager"].includes(r));
 
   const { data: planned = [] } = useQuery({
     queryKey: ["event-menus", eventId],
