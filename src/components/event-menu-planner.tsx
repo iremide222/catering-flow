@@ -84,6 +84,47 @@ export function EventMenuPlanner({ eventId }: Props) {
     },
   });
 
+  const { data: locations = [] } = useQuery({
+    queryKey: ["locations", currentOrgId],
+    enabled: !!currentOrgId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("locations")
+        .select("id,name")
+        .eq("organization_id", currentOrgId!)
+        .order("name");
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const { data: issues = [] } = useQuery({
+    queryKey: ["event-ingredient-issues", eventId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("event_ingredient_issues")
+        .select("id, created_at, locations(name)")
+        .eq("event_id", eventId)
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const issueIngredients = async () => {
+    if (!locationId) return;
+    setIssuing(true);
+    const { data, error } = await supabase.rpc("issue_event_ingredients", {
+      _event_id: eventId,
+      _location_id: locationId,
+    });
+    setIssuing(false);
+    if (error) return toast.error(error.message);
+    toast.success(`Issued ${data} ingredient${Number(data) === 1 ? "" : "s"} from stock`);
+    qc.invalidateQueries({ queryKey: ["stock-by-item", currentOrgId] });
+    qc.invalidateQueries({ queryKey: ["event-ingredient-issues", eventId] });
+  };
+
   const addDish = async () => {
     if (!currentOrgId || !dishId) return;
     const { error } = await supabase.from("event_menus").insert({
